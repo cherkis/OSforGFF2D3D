@@ -24,7 +24,7 @@ end SchwartzLinearBound
 
 /-! ## SpaceTime-specialized version
 
-For SpaceTime = EuclideanSpace ℝ (Fin 4), the time coordinate is accessed via `x 0`.
+For SpaceTime = EuclideanSpace ℝ (Fin 3), the time coordinate is accessed via `x 0`.
 This specialized version matches the signature needed in OS3_MixedRepInfra.lean.
 -/
 
@@ -128,10 +128,10 @@ theorem schwartz_vanishing_linear_bound (f : TestFunctionℂ)
 
 /-! ## Integrate over space first (Fubini approach)
 
-The key insight is to decompose SpaceTime = ℝ × ℝ³ and integrate over spatial
+The key insight is to decompose SpaceTime = ℝ × ℝ² and integrate over spatial
 coordinates first. For a Schwartz function f : SpaceTime → ℂ vanishing at t ≤ 0:
 
-1. Define G(t) = ∫_{ℝ³} ‖f(t, x)‖ dx  (the spatial integral of the norm)
+1. Define G(t) = ∫_{ℝ²} ‖f(t, x)‖ dx  (the spatial integral of the norm)
 2. G is well-defined and finite for all t (f is Schwartz)
 3. G(t) = 0 for t ≤ 0 (f vanishes there)
 4. G satisfies a linear bound: G(t) ≤ C·t for t > 0

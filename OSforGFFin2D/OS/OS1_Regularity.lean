@@ -39,7 +39,7 @@ Proves |Z[f]| ≤ exp(c · ‖f‖²_{L²}) with p = 2 and c = 1/(2m²). The arg
 5. Combine: |Z[f]| ≤ exp(‖f‖²_{L²}/(2m²))
 
 Local integrability of the two-point function C(x,0) ∼ 1/(4π²|x|²) follows from
-the Bessel K₁ asymptotics: (m/4π²|x|)K₁(m|x|) is locally integrable in 4D.
+the Bessel K₀ asymptotics: (1/(2π))K₀(m|x|) is locally integrable in 2D (logarithmic singularity).
 
 ## Main result
 

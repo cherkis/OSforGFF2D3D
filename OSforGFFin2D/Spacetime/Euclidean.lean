@@ -25,7 +25,7 @@ import OSforGFFin2D.Spacetime.Basic
 /-!
 # Euclidean Group E(4) and Its Actions
 
-Defines the Euclidean group E(4) = ℝ⁴ ⋊ O(4) with action g • x = R(x) + t
+Defines the Euclidean group E(2) = ℝ² ⋊ O(2) with action g • x = R(x) + t
 on spacetime, and its induced actions on test functions (g • f)(x) = f(g⁻¹ • x).
 
 Key properties: measure preservation (d⁴(E⁻¹x) = d⁴x), temperate growth of
@@ -38,20 +38,20 @@ open TopologicalSpace Measure
 
 noncomputable section
 
-/-OS2 R^d with d=4, where mu is the Lebegue measure.
+/-OS2 R^d with d=2, where mu is the Lebegue measure.
 We know the OS2 dp must be Euclidean invariant -/
 
 open scoped Real InnerProductSpace SchwartzMap
 
 namespace QFT
 
-/-- Orthogonal linear isometries of ℝ⁴ (the group O(4)).
-LinearIsometry is an orthogonal linear map, ie an element of O(4)-/
+/-- Orthogonal linear isometries of ℝ² (the group O(2)).
+LinearIsometry is an orthogonal linear map, ie an element of O(2)-/
 abbrev O4 : Type :=
   LinearIsometry (RingHom.id ℝ) SpaceTime SpaceTime
 
 /-!  Euclidean group -/
-/-- Euclidean motion = rotation / reflection + translation. E= R^4 x O(4)-/
+/-- Euclidean motion = rotation / reflection + translation. E= R² x O(2)-/
 structure E where
   R : O4
   t : SpaceTime
@@ -180,7 +180,7 @@ instance : Group E where
 
 /-theorem ---------------------------------------------
 
-     For all Euclidean motions g,h and every point x ∈ ℝ⁴ we have
+     For all Euclidean motions g,h and every point x ∈ ℝ² we have
          act (g * h) x  =  act g (act h x).
      In words: the `act` map is a group action of E on spacetime.
 
@@ -188,14 +188,14 @@ instance : Group E where
          act g⁻¹ (act g x) = x.
 -/
 
-/-for all Euclidean motions g and h and any point x ∈ ℝ⁴, pulling x forward by the product g*h equals pulling by h first and then by g.
+/-for all Euclidean motions g and h and any point x ∈ ℝ², pulling x forward by the product g*h equals pulling by h first and then by g.
 This is precisely the group-action law(𝑔ℎ)⁣⋅𝑥=𝑔.(ℎ. 𝑥)(gh)⋅x=g⋅(h⋅x).-/
 
 @[simp] lemma act_mul_general (g h : E) (x : SpaceTime) :
     act (g * h) x = act g (act h x) := by
   -- destructure g and h so Lean can see their components
 /-cases on g/h: expands each motion into its components
-gR : O4 the rotation, gt : ℝ⁴ the translation.
+gR : O2 the rotation, gt : ℝ² the translation.
 hR, ht likewise. That lets Lean see the literal structure of g*h.-/
   cases g with
   | mk gR gt =>
@@ -215,7 +215,7 @@ t into the desired form.
 
 /-Statement: applying g to x and then applying the inverse motion g⁻¹ returns you to x.
 This is the inverse law of a group action.-/
-/-Result: we’ve established that act : E → (ℝ⁴ → ℝ⁴) is a homomorphism into the function-composition monoid—exactly what OS-2 needs for its pull-back action on fields.-/
+/-Result: we’ve established that act : E → (ℝ² → ℝ²) is a homomorphism into the function-composition monoid—exactly what OS-2 needs for its pull-back action on fields.-/
 
 @[simp] lemma act_inv_general (g : E) (x : SpaceTime) :
     act g⁻¹ (act g x) = x := by

@@ -28,7 +28,7 @@ and tempered distributions. These are fundamental for the OS4 (Ergodicity) axiom
 
 ## Notation
 
-We work in spacetime ℝ × ℝ³ where:
+We work in spacetime ℝ × ℝ¹ where:
 - The first coordinate is time (index 0)
 - The remaining 3 coordinates are space (indices 1,2,3)
 - This matches STDimension = 4 from Basic.lean
@@ -180,7 +180,7 @@ lemma timeShift_hasTemperateGrowth (s : ℝ) : Function.HasTemperateGrowth (time
 /-! ## Time Translation on Schwartz Functions
 
 Definition 0.2 from the PDF: For any s ∈ ℝ, define the time translation operator on
-Schwartz functions T_s : S(ℝ × ℝ³) → S(ℝ × ℝ³) by
+Schwartz functions T_s : S(ℝ × ℝ¹) → S(ℝ × ℝ¹) by
 
   (T_s f)(t, x) := f(t + s, x)
 
@@ -856,12 +856,12 @@ lemma continuous_timeTranslationSchwartz (f : TestFunction) :
 
 /-! ## Time Translation on Tempered Distributions
 
-Definition 0.2 from the PDF: For φ ∈ S'(ℝ × ℝ³) (tempered distribution), define T_s φ
+Definition 0.2 from the PDF: For φ ∈ S'(ℝ × ℝ¹) (tempered distribution), define T_s φ
 by the pairing:
 
   ⟨T_s φ, f⟩ := ⟨φ, T_{-s} f⟩
 
-for all f ∈ S(ℝ × ℝ³).
+for all f ∈ S(ℝ × ℝ¹).
 -/
 
 /-- Time translation on tempered distributions (field configurations).

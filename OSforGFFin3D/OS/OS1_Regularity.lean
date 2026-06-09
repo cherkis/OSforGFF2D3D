@@ -39,7 +39,7 @@ Proves |Z[f]| ≤ exp(c · ‖f‖²_{L²}) with p = 2 and c = 1/(2m²). The arg
 5. Combine: |Z[f]| ≤ exp(‖f‖²_{L²}/(2m²))
 
 Local integrability of the two-point function C(x,0) ∼ 1/(4π²|x|²) follows from
-the Bessel K₁ asymptotics: (m/4π²|x|)K₁(m|x|) is locally integrable in 4D.
+the Bessel K_{1/2} asymptotics: the Yukawa form e^{-m|x|}/(4π|x|) is locally integrable in 3D.
 
 ## Main result
 
@@ -457,7 +457,7 @@ Using the axioms above, we establish local integrability of the Schwinger functi
 
 /-- The two-point Schwinger function is locally integrable.
     This follows from the polynomial decay bound |S_2(x)| ≤ C|x|^{-2}.
-    In d=4 spacetime dimensions, |x|^{-2} is locally integrable since 2 < 4. -/
+    In d=3 spacetime dimensions, |x|^{-1} is locally integrable since 1 < 3. -/
 lemma gff_two_point_locally_integrable (m : ℝ) [Fact (0 < m)] :
   TwoPointIntegrable (gaussianFreeField_free m) := by
   unfold TwoPointIntegrable

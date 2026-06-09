@@ -42,9 +42,9 @@ def piLpMeasurableEquiv (n : ℕ) : PiLp 2 (fun _ : Fin n => ℝ) ≃ᵐ (Fin n 
 
 /-- The measurable equivalence from SpaceTime to ℝ × SpatialCoords.
     Composes three measure-preserving maps:
-    1. piLpMeasurableEquiv : EuclideanSpace ℝ (Fin 4) → (Fin 4 → ℝ)
-    2. piFinSuccAbove 0 : (Fin 4 → ℝ) → ℝ × (Fin 3 → ℝ)
-    3. id × piLpMeasurableEquiv.symm : ℝ × (Fin 3 → ℝ) → ℝ × SpatialCoords -/
+    1. piLpMeasurableEquiv : EuclideanSpace ℝ (Fin 3) → (Fin 3 → ℝ)
+    2. piFinSuccAbove 0 : (Fin 3 → ℝ) → ℝ × (Fin 2 → ℝ)
+    3. id × piLpMeasurableEquiv.symm : ℝ × (Fin 2 → ℝ) → ℝ × SpatialCoords -/
 def spacetimeDecomp : SpaceTime ≃ᵐ ℝ × SpatialCoords :=
   (piLpMeasurableEquiv STDimension).trans
   ((MeasurableEquiv.piFinSuccAbove (fun _ => ℝ) 0).trans
@@ -62,7 +62,7 @@ lemma piLpMeasurableEquiv_measurePreserving (n : ℕ) :
 theorem spacetimeDecomp_measurePreserving :
     MeasurePreserving spacetimeDecomp (volume : Measure SpaceTime) volume := by
   unfold spacetimeDecomp
-  -- Step 1: PiLp → (Fin 4 → ℝ) is measure-preserving
+  -- Step 1: PiLp → (Fin 3 → ℝ) is measure-preserving
   have h1 : MeasurePreserving (piLpMeasurableEquiv STDimension)
       (volume : Measure SpaceTime) volume :=
     piLpMeasurableEquiv_measurePreserving STDimension

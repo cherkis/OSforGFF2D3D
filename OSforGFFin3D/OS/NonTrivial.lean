@@ -15,7 +15,7 @@ The OS axiom verification in `OS.Master` would be trivially satisfied by the Dir
 measure at ω = 0 (the "zero field").  This file closes that loophole by proving
 the GFF measure is **strictly non-degenerate**:
 
-1. The square-root propagator embedding `T : S(ℝ⁴) → L²` is injective.
+1. The square-root propagator embedding `T : S(ℝ³) → L²` is injective.
 2. The smeared covariance `C(f,f) > 0` for every nonzero test function `f`.
 3. Every field pairing `⟨ω,f⟩` has strictly positive variance under `μ_GFF`.
 4. The pointwise kernel `C(x,y) → +∞` as `x → y` (UV divergence).
@@ -32,13 +32,13 @@ Injectivity of T follows from:
 
 ## Main results
 
-- `toComplex_injective` : embedding `S(ℝ⁴,ℝ) ↪ S(ℝ⁴,ℂ)` is injective
+- `toComplex_injective` : embedding `S(ℝ³,ℝ) ↪ S(ℝ³,ℂ)` is injective
 - `fourierTransform_schwartz_injective` : `𝓕` on Schwartz space is injective
 - `embeddingMap_injective` : the square-root propagator embedding is injective
 - `freeCovarianceFormR_strictPos` : `C(f,f) > 0` for `f ≠ 0`
 - `gaussianFreeField_variance_pos` : `Var[⟨ω,f⟩] > 0` for `f ≠ 0`
 - `gaussianFreeField_not_dirac` : `μ_GFF ≠ δ₀`
-- `besselKhalf_ge_at_one` : `K_{1/2}(z) ≥ K_{1/2}(1)` for `z ∈ (0, 1]` (monotonicity)
+- `besselKhalf_tendsto_atTop_at_zero` : `K_{1/2}(z) → +∞` as `z → 0⁺`
 - `freeCovariance_tendsto_atTop` : `C(x,y) → +∞` as `x → y`
 
 ## References
@@ -56,7 +56,7 @@ namespace OSforGFF
 
 /-! ## Injectivity of the real-to-complex embedding -/
 
-/-- The embedding `toComplex : S(ℝ⁴,ℝ) → S(ℝ⁴,ℂ)` is injective.
+/-- The embedding `toComplex : S(ℝ³,ℝ) → S(ℝ³,ℂ)` is injective.
     Follows from injectivity of `ℝ → ℂ` applied pointwise. -/
 theorem toComplex_injective : Function.Injective (toComplex : TestFunction → TestFunctionℂ) := by
   intro f g h
@@ -91,7 +91,7 @@ theorem fourierTransform_schwartz_injective :
     Lebesgue measure is zero everywhere.
 
     Proof: if `f(x₀) ≠ 0`, then `U = f⁻¹(ℂ \ {0})` is open and nonempty.
-    Since volume on `ℝ⁴` is an `IsOpenPosMeasure`, `μ(U) > 0`,
+    Since volume on `ℝ³` is an `IsOpenPosMeasure`, `μ(U) > 0`,
     contradicting `f = 0` a.e. -/
 private lemma eq_zero_of_continuous_ae_zero
     {f : SpaceTime → ℂ} (hcont : Continuous f) (hae : f =ᵐ[volume] 0) :
@@ -148,7 +148,7 @@ theorem sqrtPropagatorMap_eq_zero_iff (m : ℝ) [Fact (0 < m)] (f : TestFunction
       ContinuousLinearMap.map_zero _
     simp only [h2, SchwartzMap.zero_apply, zero_mul]
 
-/-- The embedding `T : S(ℝ⁴,ℝ) → L²(ℝ⁴,ℂ)` is injective.
+/-- The embedding `T : S(ℝ³,ℝ) → L²(ℝ³,ℂ)` is injective.
 
     If `T f = T g` then `‖T(f−g)‖ = 0`, so `∫ |sqrtPropagatorMap m (f−g)|² = 0`.
     The integrand is continuous and nonneg, so it vanishes a.e., hence everywhere
@@ -218,11 +218,11 @@ theorem gaussianFreeField_variance_pos (m : ℝ) [Fact (0 < m)]
     verification in `Master.lean` is nontrivial.
 
     Any nonzero Schwartz function witnesses this.  We use a standard bump
-    function on ℝ⁴, which exists by `ContDiff.exists_eq_one_of_isOpen`. -/
+    function on ℝ³, which exists by `ContDiff.exists_eq_one_of_isOpen`. -/
 theorem gaussianFreeField_not_dirac (m : ℝ) [Fact (0 < m)] :
     ∃ f : TestFunction, f ≠ 0 ∧
       0 < ∫ ω, (distributionPairingCLM f ω) ^ 2 ∂(μ_GFF m).toMeasure := by
-  -- Schwartz space on ℝ⁴ is nontrivial: exhibit a nonzero element.
+  -- Schwartz space on ℝ³ is nontrivial: exhibit a nonzero element.
   -- This uses the existence of smooth compactly-supported bump functions.
   have ⟨f, hf⟩ : ∃ f : TestFunction, f ≠ 0 := by
     let φ : ContDiffBump (0 : SpaceTime) := ⟨1, 2, by norm_num, by norm_num⟩

@@ -157,7 +157,7 @@ lemma k_integral_after_k0_eval (s : ℝ) (hs : 0 < s) (z : SpaceTime) :
     -- The goal is now algebraic - both sides are equal by commutativity/associativity
     -- -I * (↑k₀ * ↑z0) + ↑(-s) * ↑(k₀²) = ↑(-s) * ↑(k₀²) + -I * ↑z0 * ↑k₀
     ring
-  -- Step 4: Integrability for k_sp (3D Gaussian)
+  -- Step 4: Integrability for k_sp (1D Gaussian)
   -- The lemma gives: Integrable (fun v ↦ cexp(-s * ‖v‖² + (-I) * ⟪z_sp, v⟫_ℝ))
   have h_int_ksp : Integrable (fun k_sp : SpatialCoords =>
       Complex.exp (-Complex.I * spatialDot k_sp (spatialPart z)) *
@@ -1418,7 +1418,7 @@ theorem heatKernel_bilinear_to_mixed_rep (m : ℝ) [Fact (0 < m)] (f : TestFunct
     LHS becomes: ∫_s e^{-sm²} ∫_x ∫_y f̄(x) f(y) · (1/(2π)^4) · ∫_k e^{-ik·z} e^{-s|k|²}
     where z = Θx - y = (-x₀-y₀, x_sp - y_sp)
 
-  Step 2: Decompose k = (k₀, k_sp) ∈ ℝ × ℝ³
+  Step 2: Decompose k = (k₀, k_sp) ∈ ℝ × ℝ¹
     k·z = k₀·(-x₀-y₀) + k_sp·(x_sp - y_sp) = -k₀·t + k_sp·r_sp
     where t = x₀ + y₀, r_sp = x_sp - y_sp
     This requires: lemma integral_spacetime_split

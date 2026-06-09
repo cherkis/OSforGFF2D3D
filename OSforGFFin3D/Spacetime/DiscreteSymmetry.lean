@@ -43,7 +43,7 @@ import OSforGFFin3D.Spacetime.Euclidean
 /-!
 # Time Reflection Θ and Discrete Symmetries
 
-Time reflection Θ: (t, x̄) ↦ (−t, x̄) as an orthogonal involution on ℝ⁴.
+Time reflection Θ: (t, x̄) ↦ (−t, x̄) as an orthogonal involution on ℝ³.
 Properties: self-inverse (Θ² = id), measure-preserving, isometric.
 
 Induced actions on test functions: (Θf)(x) = f(Θx) = f(−t, x̄).

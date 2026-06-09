@@ -489,8 +489,8 @@ theorem locallyIntegrable_of_rpow_decay_real {d : ℕ} (hd : d ≥ 3)
   · -- IntegrableOn f (K \ ball 0 (1/2))
     exact integrableOn_compact_diff_ball hK hC (by norm_num : (0:ℝ) < 1/2) h_decay h_meas
 
-/-- **Polynomial decay is integrable in 3D**: The function 1/(1+‖x‖)^4 is integrable
-    over SpatialCoords = EuclideanSpace ℝ (Fin 3).
+/-- **Polynomial decay is integrable in 3D** (dead at d=2; we use `_1d`): The function 1/(1+‖x‖)^4 is integrable
+    over SpatialCoords = EuclideanSpace ℝ (Fin 3) (note: dead code at d=2; we use `_1d` over ℝ¹).
 
     This is a standard result: decay rate 4 > dimension 3 ensures integrability.
 
@@ -517,7 +517,7 @@ lemma polynomial_decay_integrable_3d :
   exact (Real.rpow_natCast (1 + ‖x‖) 4).symm
 
 /-- **2D spatial polynomial decay integrability**: `(1 + ‖x‖)^{-4}` is integrable on ℝ²
-    (spatial dimension for d=3 spacetime).
+    (spatial dimension for d=3 spacetime; dead at d=2 — see `polynomial_decay_integrable_1d`).
 
     This is a standard result: decay rate 4 > dimension 2 ensures integrability.
 
@@ -526,7 +526,7 @@ lemma polynomial_decay_integrable_3d :
     since the integrand decays as r⁻³ for large r.
 
     **Used by**: `spatialNormIntegral_linear_bound` in `ProdIntegrable.lean`
-    (the d=3 spacetime / d=2 spatial version) to show that spatial integrals
+    (the d=3 spacetime / d=2 spatial version, kept as dead code; the d=2 version is `_1d`) to show that spatial integrals
     of Schwartz functions with linear time vanishing are bounded by C·t.
     The exponent 4 comes from the SpaceTime Schwartz decay (dim SpaceTime = 3 < 4). -/
 lemma polynomial_decay_integrable_1d :

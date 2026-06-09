@@ -390,7 +390,7 @@ lemma act_timeReflectionE (x : SpaceTime) : QFT.act timeReflectionE x = QFT.time
 
 /-- ** (Time Reflection Invariance - Position Space):**
   The position-space covariance kernel is invariant under geometric time reflection.
-  This follows from general Euclidean invariance since time reflection is in O(4). -/
+  This follows from general Euclidean invariance since time reflection is in O(2). -/
 lemma covariance_timeReflection_invariant (m : ℝ) :
     ∀ x y, freeCovariance m (QFT.timeReflection x) (QFT.timeReflection y) = freeCovariance m x y := by
   intro x y

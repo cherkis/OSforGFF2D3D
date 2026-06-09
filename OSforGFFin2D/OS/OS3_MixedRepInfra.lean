@@ -186,8 +186,8 @@ Since K_{1/2}(z) = √(π/(2z)) exp(-z), the identity follows.
 
 /-- **THEOREM** (formerly axiom): The d-dimensional Gaussian Fourier transform.
 
-    For d = 4, this states:
-    (1/(2π)^4) ∫_{ℝ^4} exp(-ik·z) exp(-s|k|²) d⁴k = (4πs)^{-2} exp(-|z|²/(4s))
+    For d = 2, this states:
+    (1/(2π)^2) ∫_{ℝ^2} exp(-ik·z) exp(-s|k|²) d²k = (4πs)^{-1} exp(-|z|²/(4s))
 
     which equals `heatKernelPositionSpace s |z|`.
 
@@ -2528,7 +2528,7 @@ lemma F_norm_bound_via_linear_vanishing (m : ℝ) [Fact (0 < m)] (f : TestFuncti
   -- = C_lin² · (4/3)√π · s^{3/2}  (by heat_kernel_moment_integral)
   -- < C_lin² · 5 · s^{3/2}  (since (4/3)√π ≈ 2.36 < 5)
 
-  -- The full proof follows this outline. The technical challenge is that SpaceTime = ℝ⁴
+  -- The full proof follows this outline. The technical challenge is that SpaceTime = ℝ²
   -- while heat_kernel_moment_integral is stated for time coordinates only.
   -- We need to integrate out the spatial coordinates (which are bounded by Schwartz decay).
 

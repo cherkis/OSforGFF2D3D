@@ -43,7 +43,7 @@ The cosh integral representation is particularly useful because:
 For the massive scalar field in 2D Euclidean space (d=2), the exact formula is:
   C(x,y) = (1 / (2π)) · K₀(m |x-y|)
 
-(For comparison, in 4D the formula would be: C(x,y) = (m / (4π² |x-y|)) · K₁(m |x-y|))
+(For comparison, in 4D: C(x,y) = (m / (4π² |x-y|)) · K₁(m |x-y|); in 3D: C(x,y) = (1/(4π|x-y|)) · e^{-m|x-y|} via K_{1/2})
 -/
 
 open MeasureTheory Set Filter Asymptotics Real
@@ -741,7 +741,7 @@ lemma besselK1_near_origin_bound (z : ℝ) (hz : 0 < z) (hz_small : z ≤ 1) :
     - Near 0: K₁(mr) ~ 1/(mr), so r² K₁(mr) ~ r/m, which is integrable near 0
     - At ∞: K₁(mr) ~ e^{-mr}/√(mr), so r² K₁(mr) decays exponentially
 
-    This is a key ingredient for showing the free covariance kernel is L¹ in 4D. -/
+    This is a key ingredient for showing the free covariance kernel has good integrability properties. -/
 lemma radial_besselK1_integrable (m : ℝ) (hm : 0 < m) :
     IntegrableOn (fun r => r ^ 2 * besselK1 (m * r)) (Set.Ioi 0) volume := by
   -- Split (0, ∞) = (0, 1/m] ∪ (1/m, ∞)

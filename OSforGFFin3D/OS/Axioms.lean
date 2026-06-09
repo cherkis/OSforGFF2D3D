@@ -170,8 +170,8 @@ def OS4_Ergodicity (dμ_config : ProbabilityMeasure FieldConfiguration) : Prop :
     |𝔼_μ[e^{⟨φ,f⟩ + ⟨T_s φ, g⟩}] - 𝔼_μ[e^{⟨φ,f⟩}] 𝔼_μ[e^{⟨φ,g⟩}]| ≤ c (1 + s)^{-α}
 
     This is a generalization of the clustering property that allows for any
-    polynomial decay rate. For the GFF in 4D spacetime (d=3 spatial dimensions),
-    the natural rate is α = 2d = 6 from the mass gap.
+    polynomial decay rate. For the GFF in 3D spacetime (d=2 spatial dimensions),
+    the natural rate is α = 2d = 4 from the mass gap.
 -/
 def OS4_PolynomialClustering (dμ_config : ProbabilityMeasure FieldConfiguration)
     (α : ℝ) (_hα : α > 0) : Prop :=

@@ -128,10 +128,10 @@ theorem schwartz_vanishing_linear_bound (f : TestFunctionℂ)
 
 /-! ## Integrate over space first (Fubini approach)
 
-The key insight is to decompose SpaceTime = ℝ × ℝ³ and integrate over spatial
+The key insight is to decompose SpaceTime = ℝ × ℝ¹ and integrate over spatial
 coordinates first. For a Schwartz function f : SpaceTime → ℂ vanishing at t ≤ 0:
 
-1. Define G(t) = ∫_{ℝ³} ‖f(t, x)‖ dx  (the spatial integral of the norm)
+1. Define G(t) = ∫_{ℝ¹} ‖f(t, x)‖ dx  (the spatial integral of the norm)
 2. G is well-defined and finite for all t (f is Schwartz)
 3. G(t) = 0 for t ≤ 0 (f vanishes there)
 4. G satisfies a linear bound: G(t) ≤ C·t for t > 0
@@ -143,7 +143,7 @@ Using G(t) ≤ C·t and AM-GM: t₁t₂/(t₁+t₂)² ≤ 1/4, the integrand is 
 On the bounded time domain {0 < t₁, 0 < t₂, t₁+t₂ < 1}, this gives integrability.
 -/
 
-/-- The spatial part of SpaceTime at d=3: ℝ². -/
+/-- The spatial part of SpaceTime at d=2: ℝ¹. -/
 abbrev SpatialCoords1 : Type := EuclideanSpace ℝ (Fin 1)
 
 /-- Decomposition of SpaceTime as time × space. -/
@@ -194,7 +194,7 @@ lemma spacetimeOfTimeSpace_norm_ge (t : ℝ) (x : SpatialCoords1) :
   have hy : 0 ≤ ‖spacetimeOfTimeSpace t x‖ := norm_nonneg _
   exact (sq_le_sq₀ hx hy).mp hsq_le
 
-/-- Linear embedding of ℝ² into ℝ³ as the spatial subspace at time 0.
+/-- Linear embedding of ℝ¹ into ℝ² as the spatial subspace at time 0.
     This maps x ↦ (0, x₀, x₁), i.e., spacetimeOfTimeSpace 0 x. -/
 noncomputable def spatialEmbed : SpatialCoords1 →ₗ[ℝ] SpaceTime where
   toFun := fun x => spacetimeOfTimeSpace 0 x
