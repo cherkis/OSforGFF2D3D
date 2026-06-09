@@ -167,6 +167,24 @@ lemma besselK_integrableOn_Ioi {ν z : ℝ} (hz : 0 < z) :
   simp only [one_mul]
   exact ht
 
+/-- Integrability of the K_ν integrand `exp(-z cosh t) · cosh(νt)` on `Ici 0`. -/
+lemma besselK_integrableOn_Ici {ν z : ℝ} (hz : 0 < z) :
+    IntegrableOn (fun t : ℝ => exp (-z * cosh t) * cosh (ν * t)) (Ici 0) volume := by
+  have h_split : Ici (0 : ℝ) = Icc 0 1 ∪ Ioi 1 := by
+    ext x; simp only [mem_Ici, mem_union, mem_Icc, mem_Ioi]
+    constructor
+    · intro hx; by_cases h : x ≤ 1
+      · left; exact ⟨hx, h⟩
+      · right; linarith
+    · intro h; cases h with | inl h => exact h.1 | inr h => linarith
+  rw [h_split, integrableOn_union]
+  refine ⟨?_, ?_⟩
+  · apply ContinuousOn.integrableOn_compact isCompact_Icc
+    exact ((continuous_exp.comp (continuous_const.mul continuous_cosh)).mul
+      (continuous_cosh.comp (continuous_const.mul continuous_id))).continuousOn
+  · exact (besselK_integrableOn_Ioi (ν := ν) hz).mono_set
+      (fun t (ht : (1:ℝ) < t) => lt_trans one_pos ht)
+
 private lemma exp_mul_exp_neg_cosh_integrableOn_Ioi (ν z : ℝ) (hz : 0 < z) :
     IntegrableOn (fun u => exp (ν * u) * exp (-z * cosh u)) (Ioi 0) := by
   apply integrable_of_isBigO_exp_neg (a := 0) (b := 1)
@@ -1069,3 +1087,73 @@ lemma schwingerIntegral_eq_besselKhalf (m r : ℝ) (hm : 0 < m) (hr : 0 < r) :
     2 * (2 * m / r) ^ (1 / 2 : ℝ) * besselKhalf (m * r) := by
   convert schwingerIntegral_eq_besselK (ν := (1 / 2 : ℝ)) m r hm hr using 1
   norm_num
+
+/-! ## Divergence of K_ν at the origin
+
+For any `ν ≥ 0`, `K_ν(z) → +∞` as `z → 0⁺`. The proof uses the cosh-integral
+representation `K_ν(z) = ∫₀^∞ exp(-z cosh t) cosh(νt) dt`. For any `T > 0`,
+on `[0, T]` we have `cosh t ≤ cosh T` and `cosh(νt) ≥ 1`, so
+`K_ν(z) ≥ T · exp(-z cosh T) → T` as `z → 0⁺`, which exceeds any bound. -/
+
+/-- **K_ν(z) → +∞ as z → 0⁺.** -/
+theorem besselK_tendsto_atTop_at_zero (ν : ℝ) :
+    Filter.Tendsto (besselK ν) (nhdsWithin 0 (Set.Ioi 0)) Filter.atTop := by
+  rw [Filter.tendsto_atTop]
+  intro M
+  set T : ℝ := max M 1 + 1 with hT_def
+  have hT_pos : (0 : ℝ) < T := by simp [hT_def]; positivity
+  have hT_gt_M : M < T := by simp [hT_def]; linarith [le_max_left M 1]
+  -- Lower bound K_ν(z) ≥ T · exp(-z · cosh T)
+  have h_lower : ∀ z, 0 < z → T * Real.exp (-z * Real.cosh T) ≤ besselK ν z := by
+    intro z hz
+    unfold besselK
+    have h_int : IntegrableOn
+        (fun t : ℝ => Real.exp (-z * Real.cosh t) * Real.cosh (ν * t)) (Ici 0) volume :=
+      besselK_integrableOn_Ici (ν := ν) hz
+    -- On [0, T]: exp(-z cosh T) ≤ exp(-z cosh t) · cosh(νt)
+    have h_bound : ∀ t ∈ Set.Icc (0 : ℝ) T,
+        Real.exp (-z * Real.cosh T) ≤
+          Real.exp (-z * Real.cosh t) * Real.cosh (ν * t) := by
+      intro t ht
+      have h_ct : Real.cosh t ≤ Real.cosh T := by
+        rw [Real.cosh_le_cosh]
+        rw [abs_of_nonneg ht.1, abs_of_nonneg hT_pos.le]; exact ht.2
+      have h_cosh_ge_one : (1 : ℝ) ≤ Real.cosh (ν * t) := Real.one_le_cosh (ν * t)
+      calc Real.exp (-z * Real.cosh T)
+          ≤ Real.exp (-z * Real.cosh t) := by
+            apply Real.exp_le_exp.mpr; nlinarith [Real.cosh_pos t]
+        _ = Real.exp (-z * Real.cosh t) * 1 := (mul_one _).symm
+        _ ≤ Real.exp (-z * Real.cosh t) * Real.cosh (ν * t) :=
+            mul_le_mul_of_nonneg_left h_cosh_ge_one (Real.exp_nonneg _)
+    have h_vol : volume.real (Set.Icc (0 : ℝ) T) = T := by
+      rw [Real.volume_real_Icc_of_le hT_pos.le]; ring
+    have h_cont_integrand : Continuous
+        (fun t : ℝ => Real.exp (-z * Real.cosh t) * Real.cosh (ν * t)) :=
+      (Real.continuous_exp.comp (continuous_const.mul Real.continuous_cosh)).mul
+        (Real.continuous_cosh.comp (continuous_const.mul continuous_id))
+    have h_nonneg : ∀ t : ℝ,
+        0 ≤ Real.exp (-z * Real.cosh t) * Real.cosh (ν * t) := fun t =>
+      mul_nonneg (Real.exp_nonneg _) (Real.cosh_pos _).le
+    calc T * Real.exp (-z * Real.cosh T)
+        = Real.exp (-z * Real.cosh T) * volume.real (Set.Icc 0 T) := by rw [h_vol]; ring
+      _ ≤ ∫ t in Set.Icc 0 T, Real.exp (-z * Real.cosh t) * Real.cosh (ν * t) :=
+          setIntegral_ge_of_const_le_real measurableSet_Icc
+            (by rw [Real.volume_Icc]; exact ENNReal.ofReal_ne_top)
+            h_bound h_cont_integrand.integrableOn_Icc
+      _ ≤ ∫ t in Set.Ici 0, Real.exp (-z * Real.cosh t) * Real.cosh (ν * t) := by
+          apply setIntegral_mono_set h_int
+          · exact Filter.Eventually.of_forall h_nonneg
+          · exact HasSubset.Subset.eventuallyLE (fun t (ht : t ∈ Set.Icc 0 T) => ht.1)
+  have h_cont : Continuous (fun z : ℝ => T * Real.exp (-z * Real.cosh T)) := by fun_prop
+  have h_open : IsOpen {z : ℝ | M < T * Real.exp (-z * Real.cosh T)} :=
+    isOpen_lt continuous_const h_cont
+  have h_zero_mem : (0 : ℝ) ∈ {z : ℝ | M < T * Real.exp (-z * Real.cosh T)} := by
+    simp only [Set.mem_setOf_eq, neg_zero, zero_mul, Real.exp_zero, mul_one]; exact hT_gt_M
+  exact ((Filter.Eventually.filter_mono nhdsWithin_le_nhds
+    (h_open.mem_nhds h_zero_mem)).and self_mem_nhdsWithin).mono
+    fun z ⟨hz1, hz2⟩ => le_trans hz1.le (h_lower z hz2)
+
+/-- **K_{1/2}(z) → +∞ as z → 0⁺.** Specialization to ν = 1/2 for the d=3 covariance. -/
+theorem besselKhalf_tendsto_atTop_at_zero :
+    Filter.Tendsto besselKhalf (nhdsWithin 0 (Set.Ioi 0)) Filter.atTop :=
+  besselK_tendsto_atTop_at_zero (1/2 : ℝ)

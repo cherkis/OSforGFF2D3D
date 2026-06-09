@@ -72,7 +72,7 @@ private lemma integrable_of_super_exp_decay {f : ℝ → ℝ} {z : ℝ} (_hz : 0
     _ = |exp (-1 * t)| := (abs_of_pos (exp_pos _)).symm
 
 /-- The K₀ integrand exp(-z*cosh(t)) is integrable on (1, ∞) for z > 0 -/
-private lemma besselK0_integrand_Ioi_integrable {z : ℝ} (hz : 0 < z) :
+lemma besselK0_integrand_Ioi_integrable {z : ℝ} (hz : 0 < z) :
     IntegrableOn (fun t => exp (-z * cosh t)) (Ioi 1) volume := by
   apply integrable_of_super_exp_decay hz
   · exact (continuous_exp.comp (continuous_const.mul continuous_cosh)).continuousOn
@@ -110,13 +110,13 @@ private lemma besselK1_integrand_Ioi_integrable {z : ℝ} (hz : 0 < z) :
       _ = exp (-1 * t) := by ring_nf
 
 /-- Icc and Ioi with same endpoint are disjoint -/
-private lemma Icc_disjoint_Ioi {a b : ℝ} : Disjoint (Icc a b) (Ioi b) := by
+lemma Icc_disjoint_Ioi {a b : ℝ} : Disjoint (Icc a b) (Ioi b) := by
   rw [Set.disjoint_iff]
   intro x ⟨hx_icc, hx_ioi⟩
   simp only [Set.mem_Icc, Set.mem_Ioi] at hx_icc hx_ioi; linarith
 
 /-- Helper for splitting [0,∞) = [0,1] ∪ (1,∞) -/
-private lemma Ici_split : Ici (0 : ℝ) = Icc 0 1 ∪ Ioi 1 := by
+lemma Ici_split : Ici (0 : ℝ) = Icc 0 1 ∪ Ioi 1 := by
   ext x; simp only [mem_Ici, mem_union, mem_Icc, mem_Ioi]
   constructor
   · intro hx; by_cases h : x ≤ 1; left; exact ⟨hx, h⟩; right; linarith
@@ -705,3 +705,65 @@ theorem schwingerIntegral_eq_besselK0 (m r : ℝ) (hm : 0 < m) (hr : 0 < r) :
       = ∫ s in Ioi (0:ℝ), h s := step1
     _ = 2 * ∫ s in Ioi (1:ℝ), h s := self_reciprocal_integral a ha
     _ = 2 * besselK0 (m * r) := by rw [step3]
+
+/-! ## Divergence of K₀ at the origin
+
+`K₀(z) → +∞` as `z → 0⁺`. This is the d=2 analog of the K_1 divergence (4D) and
+K_{1/2} divergence (3D). The proof uses the cosh-integral representation:
+`K₀(z) = ∫₀^∞ exp(-z cosh t) dt`. For any `T > 0`, on `[0, T]` we have
+`cosh t ≤ cosh T`, hence `exp(-z cosh t) ≥ exp(-z cosh T)`. So
+`K₀(z) ≥ T · exp(-z cosh T) → T` as `z → 0⁺`, which exceeds any bound.
+-/
+
+/-- Integrability on `Ici 0` of the K₀ integrand `exp(-z cosh t)` for `z > 0`. -/
+lemma besselK0_integrand_Ici_integrable {z : ℝ} (hz : 0 < z) :
+    IntegrableOn (fun t => exp (-z * cosh t)) (Ici 0) volume := by
+  rw [Ici_split, integrableOn_union]
+  exact ⟨(continuous_exp.comp (continuous_const.mul continuous_cosh)).continuousOn.integrableOn_compact
+            isCompact_Icc,
+         besselK0_integrand_Ioi_integrable hz⟩
+
+/-- **K₀(z) → +∞ as z → 0⁺**. The d=2 logarithmic UV divergence of the free covariance. -/
+theorem besselK0_tendsto_atTop_at_zero :
+    Filter.Tendsto besselK0 (nhdsWithin 0 (Set.Ioi 0)) Filter.atTop := by
+  rw [Filter.tendsto_atTop]
+  intro M
+  set T : ℝ := max M 1 + 1 with hT_def
+  have hT_pos : (0 : ℝ) < T := by simp [hT_def]; positivity
+  have hT_gt_M : M < T := by simp [hT_def]; linarith [le_max_left M 1]
+  -- Lower bound: K₀(z) ≥ T · exp(-z · cosh T) for z > 0
+  have h_lower : ∀ z, 0 < z → T * Real.exp (-z * Real.cosh T) ≤ besselK0 z := by
+    intro z hz
+    unfold besselK0
+    have h_int : IntegrableOn (fun t : ℝ => Real.exp (-z * Real.cosh t)) (Ici 0) volume :=
+      besselK0_integrand_Ici_integrable hz
+    have h_bound : ∀ t ∈ Set.Icc (0 : ℝ) T,
+        Real.exp (-z * Real.cosh T) ≤ Real.exp (-z * Real.cosh t) := by
+      intro t ht
+      have h_ct : Real.cosh t ≤ Real.cosh T := by
+        rw [Real.cosh_le_cosh]
+        rw [abs_of_nonneg ht.1, abs_of_nonneg hT_pos.le]; exact ht.2
+      apply Real.exp_le_exp.mpr; nlinarith [Real.cosh_pos t]
+    have h_vol : volume.real (Set.Icc (0 : ℝ) T) = T := by
+      rw [Real.volume_real_Icc_of_le hT_pos.le]; ring
+    have h_cont_integrand : Continuous (fun t : ℝ => Real.exp (-z * Real.cosh t)) :=
+      Real.continuous_exp.comp (continuous_const.mul Real.continuous_cosh)
+    calc T * Real.exp (-z * Real.cosh T)
+        = Real.exp (-z * Real.cosh T) * volume.real (Set.Icc 0 T) := by rw [h_vol]; ring
+      _ ≤ ∫ t in Set.Icc 0 T, Real.exp (-z * Real.cosh t) :=
+          setIntegral_ge_of_const_le_real measurableSet_Icc
+            (by rw [Real.volume_Icc]; exact ENNReal.ofReal_ne_top)
+            h_bound h_cont_integrand.integrableOn_Icc
+      _ ≤ ∫ t in Set.Ici 0, Real.exp (-z * Real.cosh t) := by
+          apply setIntegral_mono_set h_int
+          · exact Filter.Eventually.of_forall fun t => Real.exp_nonneg _
+          · exact HasSubset.Subset.eventuallyLE (fun t (ht : t ∈ Set.Icc 0 T) => ht.1)
+  -- As z → 0⁺, T · exp(-z · cosh T) → T > M
+  have h_cont : Continuous (fun z : ℝ => T * Real.exp (-z * Real.cosh T)) := by fun_prop
+  have h_open : IsOpen {z : ℝ | M < T * Real.exp (-z * Real.cosh T)} :=
+    isOpen_lt continuous_const h_cont
+  have h_zero_mem : (0 : ℝ) ∈ {z : ℝ | M < T * Real.exp (-z * Real.cosh T)} := by
+    simp only [Set.mem_setOf_eq, neg_zero, zero_mul, Real.exp_zero, mul_one]; exact hT_gt_M
+  exact ((Filter.Eventually.filter_mono nhdsWithin_le_nhds
+    (h_open.mem_nhds h_zero_mem)).and self_mem_nhdsWithin).mono
+    fun z ⟨hz1, hz2⟩ => le_trans hz1.le (h_lower z hz2)

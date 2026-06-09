@@ -235,18 +235,96 @@ theorem gaussianFreeField_not_dirac (m : ℝ) [Fact (0 < m)] :
   exact ⟨f, hf, gaussianFreeField_variance_pos m f hf⟩
 
 
-/-! ## UV divergence — DEFERRED
+/-! ## UV divergence at coincident points (d=3)
 
-The 4D source theorem `freeCovariance_tendsto_atTop` showed `C(x,y) → +∞` at `x → y`
-via the `K₁` Bessel formula. At d=3 the analogous formula uses `K_{1/2}` (Yukawa
-form `e^{-mr}/(4πr)`), but the divergence proof needs either a closed-form
-`K_{1/2}(z) = √(π/(2z))·e^{-z}` lemma or a monotonicity-of-`besselK` lemma — neither
-of which is currently in our adapted `General/BesselFunction.lean`.
+At d=3 the covariance is
+  `C(x,y) = (1 / (4π)^(3/2)) · 2 · (2m/r)^(1/2) · K_{1/2}(m r)`
+where `r = ‖x - y‖`. Both the prefactor `(2m/r)^(1/2)` and `K_{1/2}(m r)` diverge
+as `r → 0⁺`. For `r ≤ 1`, the prefactor is bounded below by `(2m)^(1/2) > 0`, and
+`K_{1/2}(m r) → +∞` by `besselKhalf_tendsto_atTop_at_zero`. So `C(x,y) → +∞`. -/
 
-Since `freeCovariance_tendsto_atTop` is not on the OS0–OS4 critical path (the
-"GFF is non-trivial" content is proved by the injectivity argument in
-`gaussianFreeField_not_dirac` above), this UV divergence section is deferred.
-TODO: add a `besselKhalf_tendsto_atTop_at_zero` lemma to `General/BesselFunction.lean`
-(either via the closed form or via monotonicity), then port the divergence proof. -/
+/-- **The free covariance `C(x,y) → +∞` as `x → y` (d=3 UV divergence).** -/
+theorem freeCovariance_tendsto_atTop (m : ℝ) [Fact (0 < m)] (x₀ : SpaceTime) :
+    Filter.Tendsto (fun x => freeCovarianceBessel m x₀ x)
+      (nhdsWithin x₀ {x₀}ᶜ) Filter.atTop := by
+  have hm := Fact.out (self := ‹Fact (0 < m)›)
+  -- ‖x₀ - x‖ → 0⁺ as x → x₀ through {x₀}ᶜ
+  have h_norm : Filter.Tendsto (fun x => ‖x₀ - x‖)
+      (nhdsWithin x₀ {x₀}ᶜ) (nhdsWithin 0 (Set.Ioi 0)) := by
+    apply tendsto_nhdsWithin_of_tendsto_nhds_of_eventually_within
+    · have hc : ContinuousAt (fun x : SpaceTime => ‖x₀ - x‖) x₀ :=
+        (continuous_norm.comp (continuous_const.sub continuous_id)).continuousAt
+      have := hc.tendsto; simp only [sub_self, norm_zero] at this
+      exact this.mono_left nhdsWithin_le_nhds
+    · exact eventually_nhdsWithin_of_forall fun x hx =>
+        norm_pos_iff.mpr (sub_ne_zero.mpr fun h => hx (Set.mem_singleton_iff.mpr h.symm))
+  -- m·r → 0⁺ as r → 0⁺
+  have h_mr : Filter.Tendsto (fun x => m * ‖x₀ - x‖)
+      (nhdsWithin x₀ {x₀}ᶜ) (nhdsWithin 0 (Set.Ioi 0)) := by
+    apply tendsto_nhdsWithin_of_tendsto_nhds_of_eventually_within
+    · have : Filter.Tendsto (fun x => m * ‖x₀ - x‖)
+          (nhdsWithin x₀ {x₀}ᶜ) (nhds (m * 0)) :=
+        Filter.Tendsto.const_mul m (h_norm.mono_right nhdsWithin_le_nhds)
+      simpa using this
+    · refine (h_norm.eventually self_mem_nhdsWithin).mono fun x hx => ?_
+      exact mul_pos hm hx
+  -- besselKhalf (m·r) → +∞
+  have h_Khalf : Filter.Tendsto (fun x => besselKhalf (m * ‖x₀ - x‖))
+      (nhdsWithin x₀ {x₀}ᶜ) Filter.atTop :=
+    besselKhalf_tendsto_atTop_at_zero.comp h_mr
+  -- For r ≤ 1, the prefactor `(1/(4π)^(3/2)) · 2 · (2m/r)^(1/2)` is bounded below
+  -- by the positive constant `C₀ := (1/(4π)^(3/2)) · 2 · (2m)^(1/2)`.
+  set C₀ : ℝ := (1 / ((4 * Real.pi) ^ (3 / 2 : ℝ))) * 2 * (2 * m) ^ (1/2 : ℝ) with hC₀_def
+  have hC₀_pos : 0 < C₀ := by
+    show 0 < (1 / ((4 * Real.pi) ^ (3 / 2 : ℝ))) * 2 * (2 * m) ^ (1/2 : ℝ)
+    have h1 : 0 < (1 : ℝ) / ((4 * Real.pi) ^ (3 / 2 : ℝ)) := by positivity
+    have h2 : 0 < (2 * m) ^ (1/2 : ℝ) := Real.rpow_pos_of_pos (by linarith) _
+    positivity
+  -- Combine: C₀ · besselKhalf (m·r) → +∞
+  have h_prod : Filter.Tendsto (fun x => C₀ * besselKhalf (m * ‖x₀ - x‖))
+      (nhdsWithin x₀ {x₀}ᶜ) Filter.atTop :=
+    Filter.Tendsto.const_mul_atTop hC₀_pos h_Khalf
+  rw [Filter.tendsto_atTop]; intro M
+  have h_ev := Filter.tendsto_atTop.mp h_prod M
+  have h_r_le_1 : ∀ᶠ x in nhdsWithin x₀ {x₀}ᶜ, ‖x₀ - x‖ ≤ 1 := by
+    have h_iic : Set.Iic (1 : ℝ) ∈ nhdsWithin (0 : ℝ) (Set.Ioi 0) :=
+      mem_nhdsWithin_of_mem_nhds (Iic_mem_nhds (by norm_num : (0:ℝ) < 1))
+    exact h_norm.eventually h_iic
+  filter_upwards [h_ev, h_r_le_1, h_norm.eventually self_mem_nhdsWithin,
+                  h_Khalf.eventually (Filter.eventually_ge_atTop 0)]
+    with x hxM hx_le_1 hx_pos hKhalf_nonneg
+  have hr_pos : 0 < ‖x₀ - x‖ := hx_pos
+  have hr_ne : ‖x₀ - x‖ ≠ 0 := ne_of_gt hr_pos
+  -- Unfold freeCovarianceBessel
+  show M ≤ freeCovarianceBessel m x₀ x
+  unfold freeCovarianceBessel
+  simp only [hr_ne, ↓reduceIte]
+  -- LHS bound: M ≤ C₀ · besselKhalf(m·r)
+  -- Goal: M ≤ (1/(4π)^(3/2)) · (2 · (2m/r)^(1/2) · besselKhalf(m·r))
+  -- = (1/(4π)^(3/2)) · 2 · (2m)^(1/2) · r^(-1/2) · besselKhalf(m·r)
+  -- = C₀ · r^(-1/2) · besselKhalf(m·r)
+  -- For r ≤ 1: r^(-1/2) ≥ 1, so C₀ · r^(-1/2) · besselKhalf ≥ C₀ · besselKhalf ≥ M
+  have h_r_pow_le_one : ‖x₀ - x‖ ^ (1/2 : ℝ) ≤ 1 :=
+    Real.rpow_le_one (norm_nonneg _) hx_le_1 (by norm_num)
+  have h_r_pow_pos : 0 < ‖x₀ - x‖ ^ (1/2 : ℝ) := Real.rpow_pos_of_pos hr_pos _
+  have h_div_rpow : (2 * m / ‖x₀ - x‖) ^ (1/2 : ℝ) =
+      (2 * m) ^ (1/2 : ℝ) / ‖x₀ - x‖ ^ (1/2 : ℝ) := by
+    rw [Real.div_rpow (by linarith : (0 : ℝ) ≤ 2 * m) (norm_nonneg _)]
+  rw [h_div_rpow]
+  -- Goal is now:
+  -- M ≤ (1/(4π)^(3/2)) * (2 * ((2m)^(1/2) / r^(1/2)) * besselKhalf(m·r))
+  -- Rewrite RHS as C₀ · r^(-1/2) · besselKhalf
+  have h_2m_pow_pos : 0 < (2 * m) ^ (1/2 : ℝ) := Real.rpow_pos_of_pos (by linarith) _
+  have h_inv_ge_one : (1 : ℝ) ≤ 1 / ‖x₀ - x‖ ^ (1/2 : ℝ) := by
+    rw [le_div_iff₀ h_r_pow_pos, one_mul]; exact h_r_pow_le_one
+  calc M ≤ C₀ * besselKhalf (m * ‖x₀ - x‖) := hxM
+    _ = C₀ * besselKhalf (m * ‖x₀ - x‖) * 1 := (mul_one _).symm
+    _ ≤ C₀ * besselKhalf (m * ‖x₀ - x‖) * (1 / ‖x₀ - x‖ ^ (1/2 : ℝ)) := by
+        apply mul_le_mul_of_nonneg_left h_inv_ge_one
+        exact mul_nonneg hC₀_pos.le hKhalf_nonneg
+    _ = 1 / (4 * Real.pi) ^ (3 / 2 : ℝ) *
+        (2 * ((2 * m) ^ (1/2 : ℝ) / ‖x₀ - x‖ ^ (1/2 : ℝ)) *
+          besselKhalf (m * ‖x₀ - x‖)) := by
+        rw [hC₀_def]; field_simp
 
 end OSforGFF

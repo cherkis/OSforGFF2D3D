@@ -235,18 +235,55 @@ theorem gaussianFreeField_not_dirac (m : ℝ) [Fact (0 < m)] :
   exact ⟨f, hf, gaussianFreeField_variance_pos m f hf⟩
 
 
-/-! ## UV divergence — DEFERRED
+/-! ## UV divergence at coincident points (d=2)
 
-The 4D source theorem `freeCovariance_tendsto_atTop` showed `C(x,y) → +∞` at `x → y`
-via the `K₁` Bessel formula. At d=3 the analogous formula uses `K_{1/2}` (Yukawa
-form `e^{-mr}/(4πr)`), but the divergence proof needs either a closed-form
-`K_{1/2}(z) = √(π/(2z))·e^{-z}` lemma or a monotonicity-of-`besselK` lemma — neither
-of which is currently in our adapted `General/BesselFunction.lean`.
+At d=2 the covariance is `C(x,y) = (1/(2π)) · K₀(m·r)` where `r = ‖x-y‖`.
+The modified Bessel function `K₀` has a *logarithmic* singularity at 0:
+`K₀(z) ∼ -log(z/2) - γ` as `z → 0⁺`, in particular `K₀(z) → +∞`. So
+`C(x,y) → +∞` as `x → y`. -/
 
-Since `freeCovariance_tendsto_atTop` is not on the OS0–OS4 critical path (the
-"GFF is non-trivial" content is proved by the injectivity argument in
-`gaussianFreeField_not_dirac` above), this UV divergence section is deferred.
-TODO: add a `besselKhalf_tendsto_atTop_at_zero` lemma to `General/BesselFunction.lean`
-(either via the closed form or via monotonicity), then port the divergence proof. -/
+/-- **The free covariance `C(x,y) → +∞` as `x → y` (logarithmic UV divergence at d=2).** -/
+theorem freeCovariance_tendsto_atTop (m : ℝ) [Fact (0 < m)] (x₀ : SpaceTime) :
+    Filter.Tendsto (fun x => freeCovarianceBessel m x₀ x)
+      (nhdsWithin x₀ {x₀}ᶜ) Filter.atTop := by
+  have hm := Fact.out (self := ‹Fact (0 < m)›)
+  -- ‖x₀ - x‖ → 0⁺ as x → x₀ through {x₀}ᶜ
+  have h_norm : Filter.Tendsto (fun x => ‖x₀ - x‖)
+      (nhdsWithin x₀ {x₀}ᶜ) (nhdsWithin 0 (Set.Ioi 0)) := by
+    apply tendsto_nhdsWithin_of_tendsto_nhds_of_eventually_within
+    · have hc : ContinuousAt (fun x : SpaceTime => ‖x₀ - x‖) x₀ :=
+        (continuous_norm.comp (continuous_const.sub continuous_id)).continuousAt
+      have := hc.tendsto; simp only [sub_self, norm_zero] at this
+      exact this.mono_left nhdsWithin_le_nhds
+    · exact eventually_nhdsWithin_of_forall fun x hx =>
+        norm_pos_iff.mpr (sub_ne_zero.mpr fun h => hx (Set.mem_singleton_iff.mpr h.symm))
+  -- m·r → 0⁺ as r → 0⁺
+  have h_mr : Filter.Tendsto (fun x => m * ‖x₀ - x‖)
+      (nhdsWithin x₀ {x₀}ᶜ) (nhdsWithin 0 (Set.Ioi 0)) := by
+    apply tendsto_nhdsWithin_of_tendsto_nhds_of_eventually_within
+    · have : Filter.Tendsto (fun x => m * ‖x₀ - x‖)
+          (nhdsWithin x₀ {x₀}ᶜ) (nhds (m * 0)) :=
+        Filter.Tendsto.const_mul m (h_norm.mono_right nhdsWithin_le_nhds)
+      simpa using this
+    · refine (h_norm.eventually self_mem_nhdsWithin).mono fun x hx => ?_
+      exact mul_pos hm hx
+  -- K₀(m·r) → +∞
+  have h_K0 : Filter.Tendsto (fun x => besselK0 (m * ‖x₀ - x‖))
+      (nhdsWithin x₀ {x₀}ᶜ) Filter.atTop :=
+    besselK0_tendsto_atTop_at_zero.comp h_mr
+  -- Multiply by positive prefactor 1/(2π)
+  have h_prefactor_pos : 0 < 1 / (2 * Real.pi) := by positivity
+  have h_prod : Filter.Tendsto (fun x => 1 / (2 * Real.pi) * besselK0 (m * ‖x₀ - x‖))
+      (nhdsWithin x₀ {x₀}ᶜ) Filter.atTop :=
+    Filter.Tendsto.const_mul_atTop h_prefactor_pos h_K0
+  -- Identify with freeCovarianceBessel for x ≠ x₀
+  rw [Filter.tendsto_atTop]; intro M
+  have h_ev := Filter.tendsto_atTop.mp h_prod M
+  filter_upwards [h_ev, h_norm.eventually self_mem_nhdsWithin] with x hxM hx_pos
+  have hr_ne : ‖x₀ - x‖ ≠ 0 := ne_of_gt hx_pos
+  show M ≤ freeCovarianceBessel m x₀ x
+  unfold freeCovarianceBessel
+  simp only [hr_ne, ↓reduceIte]
+  exact hxM
 
 end OSforGFF
