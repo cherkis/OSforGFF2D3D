@@ -112,11 +112,14 @@ $s < n$. The kernel lives on the full spacetime $\mathbb{R}^d$ ($n = d$), and $s
 always — so it is locally integrable in every dimension. The libraries realize this
 differently:
 
-- **3D**: `locallyIntegrable_of_rpow_decay_real (d := 3) (α := 2)`. Here $\alpha$ is the
-  exponent of a power-law *upper bound* on the kernel near the origin,
-  $|C(z)| \le C\,\|z\|^{-\alpha}$, and the lemma requires $\alpha < d$. The 3D singularity is
-  only $\|z\|^{-1}$, but the proof uses the coarser bound $\alpha = 2$ (valid since
-  $\|z\|^{-1} \le \|z\|^{-2}$ near $0$); $2 < 3$ then gives integrability on $\mathbb{R}^3$.
+- **3D**: `locallyIntegrable_of_rpow_decay_real (d := 3) (α := 2)`. This lemma takes a global
+  power-law upper bound $|C(z)| \le C\,\|z\|^{-\alpha}$ and concludes local integrability
+  whenever $\alpha < d$. Crucially, $\alpha$ is the exponent of the *bound*, not the true
+  singularity exponent $s = d-2 = 1$: any $\alpha$ with $d-2 \le \alpha < d$ works — it must be
+  $\ge d-2$ for the bound to dominate the $\|z\|^{-1}$ blow-up near $0$, and $< d$ to be
+  integrable. The proof simply takes $\alpha = 2 \in [1, 3)$ (the bound $|C(z)| \le C\,\|z\|^{-2}$
+  holds globally: it dominates $\|z\|^{-1}$ near $0$ and the exponential tail at infinity). The
+  tight choice $\alpha = 1$ would work equally well; $\alpha = 2$ is just what the proof uses.
 - **2D**: global integrability `freeCovarianceKernel_integrable` — $C(z) = (1/2\pi)\,K_0(m\|z\|)$
   has only a logarithmic singularity and an exponential tail, so it is integrable on **all**
   of $\mathbb{R}^2$; no local power-law argument is needed.
