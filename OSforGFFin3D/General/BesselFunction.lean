@@ -682,7 +682,7 @@ lemma besselK_near_origin_bound {ν : ℝ} (νpos : 0 < ν) (νle : ν ≤ 1) (z
 private lemma radial_besselK_continuousOn {ν m : ℝ} (hm : 0 < m) :
     ContinuousOn (fun r => r ^ 2 * besselK ν (m * r)) (Ioi 0) := by
   apply ContinuousOn.mul (continuous_pow 2).continuousOn
-  apply (besselK_continuousOn (ν := ν)).comp (continuous_mul_left m).continuousOn
+  apply (besselK_continuousOn (ν := ν)).comp (continuous_const_mul m).continuousOn
   intro r hr
   simp only [mem_Ioi] at hr ⊢
   exact mul_pos hm hr

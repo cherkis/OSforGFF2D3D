@@ -169,7 +169,7 @@ theorem schwinger_two_point_decay_bound (m : ℝ) [Fact (0 < m)] :
     simp only [h]
     -- By definition, SchwingerTwoPointFunction _ 0 = 0
     rw [schwingerTwoPointFunction_zero]
-    simp only [norm_zero, norm_zero, zero_mul]
+    simp only [norm_zero]
     positivity
   · -- Non-coincident points: use the bridge lemma
     rw [schwingerTwoPointFunction_eq_freeCovarianceKernel m (x - y) h]

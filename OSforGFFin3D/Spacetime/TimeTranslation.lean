@@ -287,9 +287,8 @@ def unitTimeDir : SpaceTime := EuclideanSpace.single timeIndex (1 : ℝ)
 lemma continuous_timeShift_param (x : SpaceTime) : Continuous (fun s : ℝ => timeShift s x) := by
   have h_shift : (fun s : ℝ => timeShift s x) = (fun s => x + s • unitTimeDir) := by
     funext s; simp only [timeShift, unitTimeDir, EuclideanSpace.single]
-    ext i; simp only [PiLp.add_apply, PiLp.smul_apply, smul_eq_mul, Pi.single,
-      Function.update, timeIndex, eq_rec_constant, dite_eq_ite]
-    split_ifs with h1 h2 <;> simp_all
+    ext i; simp only [PiLp.add_apply, PiLp.smul_apply, smul_eq_mul, timeIndex]
+    split_ifs with h1 <;> simp_all
   rw [h_shift]
   exact continuous_const.add (continuous_id.smul continuous_const)
 
@@ -395,7 +394,7 @@ theorem schwartz_timeTranslation_lipschitz_seminorm
   let y := h • unitTimeDir
   have hy : ‖y‖ = |h| := by
     simp only [y, unitTimeDir, norm_smul, Real.norm_eq_abs]
-    rw [EuclideanSpace.norm_single, norm_one, mul_one]
+    rw [PiLp.norm_single, norm_one, mul_one]
   -- Use Mean Value estimate: ‖g(1) - g(0)‖ ≤ |h| · sup ‖D^{n+1} f(path)‖ · ‖unitTimeDir‖
   -- Since the path is from x to x + h•e₀, the bound involves |h|
   -- We bound this by the seminorm, absorbing weight shift via Peetre

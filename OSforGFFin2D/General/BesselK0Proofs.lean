@@ -619,7 +619,7 @@ private lemma self_reciprocal_integral (a : ℝ) (ha : 0 < a) :
       (∫ s in Ioc 0 1, (1/s) * exp (-a * (s + s⁻¹))) +
       ∫ s in Ioi 1, (1/s) * exp (-a * (s + s⁻¹)) := by
     rw [← (Ioc_union_Ioi_eq_Ioi zero_le_one)]
-    exact integral_union_ae (Ioc_disjoint_Ioi le_rfl |>.aedisjoint)
+    exact setIntegral_union₀ (Ioc_disjoint_Ioi le_rfl |>.aedisjoint)
       measurableSet_Ioi.nullMeasurableSet
       (schwinger_integrand_integrableOn_Ioc a ha)
       (schwinger_integrand_integrableOn_Ioi a ha)
@@ -631,7 +631,7 @@ private lemma self_reciprocal_integral (a : ℝ) (ha : 0 < a) :
     · rintro ⟨x, hx, rfl⟩; exact ⟨by positivity, inv_lt_one_of_one_lt₀ hx⟩
     · intro ⟨hy0, hy1⟩; exact ⟨y⁻¹, one_lt_inv_iff₀.mpr ⟨hy0, hy1⟩, inv_inv y⟩
   set h := fun s : ℝ => (1/s) * exp (-a * (s + s⁻¹))
-  have h_cov := integral_image_eq_integral_deriv_smul_of_antitone (F := ℝ)
+  have h_cov := integral_image_eq_integral_deriv_smul_of_antitoneOn (F := ℝ)
     measurableSet_Ioi
     (fun x hx => (hasDerivAt_inv (ne_of_gt (by linarith [mem_Ioi.mp hx] : 0 < x))).hasDerivWithinAt)
     (inv_antitoneOn_Ioi.mono (Ioi_subset_Ioi zero_le_one))
