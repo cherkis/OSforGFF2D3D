@@ -19,16 +19,18 @@ General ──→ Spacetime ──→ Covariance ──→ Schwinger ──→ M
 | Layer          | 4D files | OSforGFFin3D | OSforGFFin2D |
 |----------------|---------:|-------------:|-------------:|
 | General        |       12 |            2 |            3 |
-| Spacetime      |        9 |            8 |            8 |
+| Spacetime      |        9 |            9 |            9 |
 | Covariance     |        4 |            4 |            4 |
 | Schwinger      |        3 |            3 |            3 |
 | Measure        |        6 |            4 |            4 |
-| OS             |       12 |           13 |           13 |
+| OS             |       13 |           13 |           13 |
 | **Total**      |   **47** |       **35** |       **36** |
 
-The 2D library carries one extra `General/` file (`BesselK0Proofs.lean`) — see §3. Both
-libraries carry one extra `OS/` file (`NonTrivial.lean`) that has no analog in the 4D
-library — see §4.
+The 2D library carries one extra `General/` file (`BesselK0Proofs.lean`), and its
+dimension-specific Bessel apparatus (`besselKhalf`, `besselK0`, generic `besselK`) is new
+relative to 4D, which exposes only `besselK1` — see §3. `OS/NonTrivial.lean` exists in all
+three libraries (it is a copied, dimension-adapted file, not new); the dimension enters only
+in its UV-divergence proof — see §4.
 
 ## Cross-cutting edge
 
@@ -37,17 +39,24 @@ for the identity-theorem argument S₂ = C. Not circular: OS0 depends on `Measur
 (the measure must exist before we can prove analyticity), and `IsGaussian` feeds back into
 OS1–OS4 (which need S₂ = C).
 
-## Three assumed axioms (unchanged from 4D)
+## Foundational axioms (none assumed)
 
-| Axiom | Why needed |
-|-------|-----------|
-| `schwartz_nuclear` | Minlos requires a nuclear source space |
-| `minlos_theorem` | Existence + uniqueness of the GFF measure |
-| `differentiable_analyticAt_finDim` | Hartogs' theorem for OS0 |
+The GFF construction is fully proved — in particular `minlos_theorem`
+(`BochnerMinlos/Minlos/Main.lean`) is a `theorem`, not an axiom, and the GFF measure's
+existence and uniqueness are derived, not posited.
 
-These three are dimension-agnostic and are imported unchanged from `OSforGFF.Measure.*` /
-`OSforGFF.OS.*`. The `#print axioms` output for the master theorems in each dimension shows
-exactly these three plus the standard Lean/Mathlib axioms.
+`#print axioms` on the master theorem `OSforGFF.gaussianFreeField_satisfies_all_OS_axioms`
+returns, in **both** dimensions, only Lean's three standard foundational axioms:
+
+```
+propext, Classical.choice, Quot.sound
+```
+
+There are no project-specific assumed axioms — neither in these libraries nor in the
+reachable part of the 4D dependency. (Some `axiom` declarations exist in unrelated
+experimental/test modules of deeper dependencies — e.g. `GaussianField/Cylinder/*` and
+`BochnerMinlos/Test/WhiteNoise.lean` — but none are imported by the OS proof chain, as the
+axiom check above confirms.)
 
 ## What changes by dimension
 
@@ -188,9 +197,10 @@ The 2D library splits Bessel work across two files:
 Splitting this off keeps `BesselFunction.lean` aligned line-by-line with the 4D file so
 upstream changes can still be tracked.
 
-## §4 — `OS/NonTrivial.lean` (new in both 3D and 2D)
+## §4 — `OS/NonTrivial.lean` (nontriviality + UV divergence)
 
-The 4D library does not prove that the GFF measure is non-Dirac. Both new libraries do.
+`OS/NonTrivial.lean` is present in all three libraries (4D, 3D, 2D); ours are copied,
+dimension-adapted versions. Like 4D, each proves the GFF measure is non-Dirac.
 The file proves (i) `embeddingMap_injective` — the square-root propagator embedding
 $T : \mathcal{S}(\mathbb{R}^d, \mathbb{R}) \hookrightarrow L^2$ is injective; (ii) strict
 positivity `C(f,f) > 0` for $f \neq 0$; (iii) strict positivity of the variance under

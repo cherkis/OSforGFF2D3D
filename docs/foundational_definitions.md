@@ -9,17 +9,13 @@ For the 4D originals see `https://github.com/mrdouglasny/OSforGFF/tree/main/docs
 
 ---
 
-## Axioms — unchanged
+## Axioms — none assumed
 
-Both libraries re-use the 4D axioms verbatim. None are duplicated in the per-dimension
-source tree; they are imported from `OSforGFF.Measure.NuclearSpace`, `OSforGFF.Measure.Minlos`,
-and `OSforGFF.OS.OS0_Analyticity` via the lake dependency.
-
-| Axiom | Source |
-|-------|--------|
-| `schwartz_nuclear` | `OSforGFF.Measure.NuclearSpace:145` |
-| `minlos_theorem` | `OSforGFF.Measure.Minlos:73` |
-| `differentiable_analyticAt_finDim` | `OSforGFF.OS.OS0_Analyticity:86` |
+Neither library introduces any `axiom`, and neither does the reachable part of the 4D
+dependency. The GFF construction is fully proved: `minlos_theorem`
+(`BochnerMinlos/Minlos/Main.lean`) is a `theorem`, not an axiom. `#print axioms` on the
+master theorem `OSforGFF.gaussianFreeField_satisfies_all_OS_axioms` returns, in both
+dimensions, only Lean's standard `propext`, `Classical.choice`, `Quot.sound`.
 
 ---
 
@@ -191,11 +187,12 @@ is identical. See `definitions_entering_OS_axioms.md` (this directory) for a bri
 
 ---
 
-## Nontriviality — new in both libraries
+## Nontriviality
 
 ### `OSforGFFin3D/OS/NonTrivial.lean` and `OSforGFFin2D/OS/NonTrivial.lean`
 
-This file has no analog in the 4D library. Every theorem listed here is **new**:
+This file exists in the 4D library too; ours are copied, dimension-adapted versions (it is
+listed as a copied file in `dimension_dependence_*.md`). The theorems and their locations:
 
 | Line | Name | Definition / claim |
 |------|------|--------------------|

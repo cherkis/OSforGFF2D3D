@@ -110,7 +110,8 @@ is identical as a Lean statement, but its proof goes through
 because the prefactors differ. See `architecture.md` §4 and `foundational_definitions.md`
 ("Nontriviality") for the proof shape.
 
-The 4D library does not prove this theorem; it is new in both new libraries.
+The 4D library proves the d=4 instance of this theorem in its own `OS/NonTrivial.lean`; the
+3D and 2D proofs differ only in the Bessel input (`besselKhalf` / `besselK0` vs 4D's `besselK1`).
 
 ### `Spacetime/Tonelli.lean` and `Spacetime/ProdIntegrable.lean`
 
@@ -125,6 +126,6 @@ the same `SpatialCoords` abbreviation defined in `Spacetime/Basic.lean`.
 
 The 13 audit verdicts in the 4D `definitions_entering_OS_axioms.md` apply unchanged. The
 dimension is visible in three places (closed-form covariance, norm-decomposition lemma,
-spatial decay threshold), none of which alters the OS axiom statements. One new
-non-axiom theorem (`freeCovariance_tendsto_atTop`) appears in both libraries and is the only
-result with dimension-divergent proof structure.
+spatial decay threshold), none of which alters the OS axiom statements. One non-axiom
+theorem (`freeCovariance_tendsto_atTop`) is the only result with dimension-divergent proof
+structure.
