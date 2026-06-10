@@ -100,13 +100,35 @@ hardcoded `Fin.sum_univ_four`, $(4\pi t)^{-d/2}$, or $(2\pi)^d$:
 | Plancherel    | $(2\pi)^4$         | $(2\pi)^3$         | $(2\pi)^2$      |
 | Norm expansion| `Fin.sum_univ_four`| `Fin.sum_univ_three` | `Fin.sum_univ_two` |
 
-### 4. Spatial integrability
+### 4. Local integrability of the covariance kernel
 
-`OS1_Regularity` needs $r \mapsto C(x, y)$ to be locally integrable. The singularity is
-$r^{-(d-2)}$, the spatial dimension is $d - 1$, and integrability holds iff $d - 2 < d - 1 + 1$,
-i.e. always. The Lean lemma `polynomial_decay_integrable_*d` is restated per dimension with
-the relevant decay rate ($\alpha > d - 1$). At $d = 2$ it becomes "decay $>\!1$"; at $d = 3$,
-"decay $>\!2$".
+`OS1_Regularity` needs the position-space kernel $C(z)$, $z = x - y$, to be integrable so the
+covariance bilinear form is finite. The only obstruction is the short-distance singularity
+(§2): $C(z) \sim \|z\|^{-(d-2)}$ for $d \ge 3$, logarithmic for $d = 2$.
+
+A radial singularity $\|z\|^{-s}$ is locally integrable on $\mathbb{R}^n$ iff $s < n$: in
+polar form $\int \|z\|^{-s}\,d^n z = \int r^{\,n-1-s}\,dr$ near $0$, which converges iff
+$s < n$. The kernel lives on the full spacetime $\mathbb{R}^d$ ($n = d$), and $s = d-2 < d$
+always — so it is locally integrable in every dimension. The libraries realize this
+differently:
+
+- **3D**: `locallyIntegrable_of_rpow_decay_real (d := 3) (α := 2)`. Here $\alpha$ is the
+  exponent of a power-law *upper bound* on the kernel near the origin,
+  $|C(z)| \le C\,\|z\|^{-\alpha}$, and the lemma requires $\alpha < d$. The 3D singularity is
+  only $\|z\|^{-1}$, but the proof uses the coarser bound $\alpha = 2$ (valid since
+  $\|z\|^{-1} \le \|z\|^{-2}$ near $0$); $2 < 3$ then gives integrability on $\mathbb{R}^3$.
+- **2D**: global integrability `freeCovarianceKernel_integrable` — $C(z) = (1/2\pi)\,K_0(m\|z\|)$
+  has only a logarithmic singularity and an exponential tail, so it is integrable on **all**
+  of $\mathbb{R}^2$; no local power-law argument is needed.
+
+A separate helper, `polynomial_decay_integrable_*d` (`General/FunctionalAnalysis.lean`),
+governs decay *at infinity on a spatial slice* $\mathbb{R}^{d-1}$ — it is used in
+`Spacetime/ProdIntegrable.lean` (product/Tonelli integrability behind the Schwinger
+representation), **not** in OS1. It states $1/(1+\|x\|)^{\alpha}$ is integrable, where here
+$\alpha$ is instead the decay exponent at infinity; `integrable_one_add_norm` requires
+$\alpha$ to exceed the slice dimension. The 3D library uses the $\mathbb{R}^2$ instance
+(threshold $\alpha > 2$) and the 2D library the $\mathbb{R}^1$ instance ($\alpha > 1$); both
+fix $\alpha = 4$, comfortably above either threshold.
 
 ## OS3: the longest proof chain (per-dimension specifics)
 

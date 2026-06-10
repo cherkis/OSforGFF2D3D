@@ -78,18 +78,22 @@ Three places in the supporting infrastructure show the dimension explicitly:
    in every dimension; the proof uses `Fin.sum_univ_three` (3D) or `Fin.sum_univ_two` (2D)
    instead of `Fin.sum_univ_four`. This is invisible to a user of OS0–OS4.
 
-3. **`polynomial_decay_integrable_*d`** in `General/FunctionalAnalysis.lean`. Its statement
-   asserts integrability of $(1 + \|x\|)^{-\alpha}$ on $\mathbb{R}^{d-1}$ for sufficiently
-   large $\alpha$. The required threshold ($\alpha > d - 1$) is what changes:
+3. **`polynomial_decay_integrable_*d`** in `General/FunctionalAnalysis.lean`. It states that
+   $1/(1 + \|x\|)^{\alpha}$ is integrable on a spatial slice $\mathbb{R}^{d-1}$, where
+   $\alpha$ is the decay exponent at infinity; `integrable_one_add_norm` requires $\alpha$ to
+   exceed the slice dimension. What changes per dimension is the slice and its threshold:
 
-   | $d$ | spatial dimension | required decay |
-   |-----|-------------------|----------------|
-   | 4   | 3 | $\alpha > 3$ (lemma states $\alpha = 4$) |
-   | 3   | 2 | $\alpha > 2$ (lemma states $\alpha = 3$) |
-   | 2   | 1 | $\alpha > 1$ (lemma states $\alpha = 2$) |
+   | $d$ | spatial slice | threshold | instance used |
+   |-----|---------------|-----------|---------------|
+   | 4   | $\mathbb{R}^3$ | $\alpha > 3$ | `_3d` |
+   | 3   | $\mathbb{R}^2$ | $\alpha > 2$ | `_2d` |
+   | 2   | $\mathbb{R}^1$ | $\alpha > 1$ | `_1d` |
 
-   Used inside `OS1_Regularity` to justify local integrability of the singular position-space
-   kernel.
+   All three instances fix $\alpha = 4$ (above every threshold). Used in
+   `Spacetime/ProdIntegrable.lean` for product/Tonelli integrability behind the Schwinger
+   representation — **not** in `OS1_Regularity`, whose own local integrability of the singular
+   kernel comes from `locallyIntegrable_of_rpow_decay_real` (3D) or global
+   `freeCovarianceKernel_integrable` (2D).
 
 None of these observable-dimension points changes the *correctness* of OS0–OS4. Items 2 and
 3 are entirely internal to the proof. Item 1 is a definition change that makes the OS
