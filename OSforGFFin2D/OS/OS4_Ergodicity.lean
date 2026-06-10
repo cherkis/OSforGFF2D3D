@@ -868,7 +868,7 @@ lemma clustering_implies_covariance_decay (m : ℝ) [Fact (0 < m)] (f : TestFunc
           exact Real.rpow_le_rpow_of_exponent_le h_base (by norm_num : (-6 : ℝ) ≤ -3)
 
 /-- The norm of the GFF covariance is integrable on [0,T] for each fixed first argument.
-    Uses gff_covariance_norm_integrableOn_slice_axiom to avoid expensive type unification. -/
+    Uses OSforGFF.gff_covariance_norm_integrableOn_slice_proved to avoid expensive type unification. -/
 lemma gff_covariance_norm_integrableOn_slice (m : ℝ) [Fact (0 < m)] (f : TestFunctionℂ)
     (s : ℝ) (T : ℝ) :
     let μ := (gaussianFreeField_free m).toMeasure

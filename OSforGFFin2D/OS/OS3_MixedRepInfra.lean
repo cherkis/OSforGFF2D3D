@@ -184,7 +184,7 @@ The substitution u = √(a/b) exp(t) transforms this into an integral related to
 Since K_{1/2}(z) = √(π/(2z)) exp(-z), the identity follows.
 -/
 
-/-- **THEOREM** (formerly axiom): The d-dimensional Gaussian Fourier transform.
+/-- **Theorem:** The d-dimensional Gaussian Fourier transform.
 
     For d = 2, this states:
     (1/(2π)^2) ∫_{ℝ^2} exp(-ik·z) exp(-s|k|²) d²k = (4πs)^{-1} exp(-|z|²/(4s))
@@ -222,11 +222,11 @@ theorem heatKernel_eq_gaussianFT (s : ℝ) (hs : 0 < s) (z : SpaceTime) :
           congr 1
           exact h_comm.symm
 
-/-! ### Technical Integration Axioms
+/-! ### Technical Integration Lemmas
 
-The following axioms capture technical integrability and measurability conditions
+The following lemmas establish technical integrability and measurability conditions
 that are mathematically clear but require substantial Mathlib plumbing to formalize.
-The proof outlines are documented; these could be theorems with more work. -/
+The proof outlines are documented; they are proven below. -/
 
 /-- The heat kernel is jointly continuous on (0, ∞) × ℝ as a function of (t, r). -/
 lemma heatKernelPositionSpace_continuousOn :
@@ -260,7 +260,7 @@ lemma heatKernelPositionSpace_continuousOn :
       simp only [Set.mem_Ioi] at ht
       simp; exact ht.ne'
 
-/-- **THEOREM** (formerly axiom): The heat kernel composition is AEStronglyMeasurable.
+/-- **Theorem:** The heat kernel composition is AEStronglyMeasurable.
 
     The function `p ↦ heatKernelPositionSpace p.1 ‖timeReflection p.2.1 - p.2.2‖`
     is AEStronglyMeasurable with respect to the restricted product measure
@@ -672,7 +672,7 @@ theorem schwinger_bound_integrable_fubini (m : ℝ) [Fact (0 < m)] (f : TestFunc
               schwinger_bound_integrand_integral_xy s hs' f Cf m hCf_nonneg h_f_int
     exact h_eq.symm
 
-/-- **THEOREM** (formerly axiom): The bound function for Schwinger integrability is integrable.
+/-- **Theorem:** The bound function for Schwinger integrability is integrable.
 
     For any Schwartz function f and mass m > 0, the bound
     `p ↦ ‖f p.2.1‖ * ‖f‖_∞ * exp(-p.1 * m²) * H(p.1, ‖Θ p.2.1 - p.2.2‖)`
@@ -778,27 +778,7 @@ theorem schwinger_bound_integrable (m : ℝ) [Fact (0 < m)] (f : TestFunctionℂ
   -- The function is nonnegative a.e. on Ioi 0 × SpaceTime × SpaceTime
   -- The iterated integral equals: Cf * ‖f‖_{L¹} / m² < ∞
 
-  -- For now, we accept this as the technical Fubini step
-  -- The mathematical content is established by the ingredients above
-
-  -- To complete this proof rigorously, one would need to:
-  -- 1. Show AEStronglyMeasurable of the integrand on the product space
-  --    (follows from continuity of all components for s > 0)
-  -- 2. Apply integrable_prod_iff twice (once for s vs (x,y), once for x vs y)
-  -- 3. Use h_y_eq_one to simplify the y-integral to 1
-  -- 4. Use h_f_int to bound the x-integral
-  -- 5. Use h_exp_int to bound the s-integral
-
-  -- The total value is: Cf * ‖f‖_{L¹} / m² < ∞
-  -- This is finite since f is Schwartz (hence L¹) and m > 0
-
-  -- TECHNICAL NOTE: This proof requires careful handling of:
-  -- - SFinite instances for volume.prod volume
-  -- - Measurability on restricted measures
-  -- - Proper Fubini/Tonelli theorem application
-  -- These are standard but tedious in Lean.
-
-  -- Axiom bridge for the technical Fubini argument
+  -- Discharge the technical Fubini/Tonelli step via the proven schwinger_bound_integrable_fubini.
   exact schwinger_bound_integrable_fubini m f Cf hCf h_f_int hCf_nonneg h_y_eq_one h_exp_int
 
 
@@ -1890,7 +1870,7 @@ lemma heatKernelMomentExt_parametric_eq_setIntegral (s : ℝ) (t₁ : ℝ) (ht�
     is integrable on (0,∞).
 
     **Proof sketch**:
-    1. heatKernelMomentExt is integrable on ℝ² (sorry - uses Tonelli + finite integral)
+    1. heatKernelMomentExt is integrable on ℝ² (via heatKernelMomentExt_parametric_integrable)
     2. By Fubini, t₁ ↦ ∫ t₂, heatKernelMomentExt(t₁,t₂) is integrable on ℝ
     3. The set integral on (0,∞) equals the full integral (zero outside)
     4. Multiply by constant c preserves integrability -/
@@ -2316,7 +2296,7 @@ lemma spacetime_fubini_linear_vanishing_bound (f : TestFunctionℂ)
               positivity
     _ = C_sp^2 * 10 * s^(3/2 : ℝ) := by ring
 
-/-- **Textbook Axiom**: Products of Schwartz norms and bounded continuous functions are measurable.
+/-- **Lemma**: Products of Schwartz norms and bounded continuous functions are measurable.
 
     For Schwartz f : SpaceTime → ℂ, constants c₁, c₂ ∈ ℝ, s > 0, and fixed x : SpaceTime,
     the function a ↦ ‖f x‖ * ‖f a‖ * c₁ * exp(-(x₀ + a₀)²/(4s)) * c₂ is AEStronglyMeasurable.
@@ -2354,7 +2334,7 @@ lemma schwartz_heat_product_aestronglymeasurable (f : TestFunctionℂ)
     simpa [div_eq_mul_inv, mul_comm, mul_left_comm, mul_assoc] using h5.aestronglyMeasurable
   exact ((((h_fx.mul h_fa).mul h_c1).mul h_exp).mul h_c2)
 
-/-- **Textbook Axiom**: Integrability of iterated integrals for Schwartz-bounded functions.
+/-- **Lemma**: Integrability of iterated integrals for Schwartz-bounded functions.
 
     For Schwartz f : SpaceTime → ℂ and bounded factors (√(π/s), exp(-sω²)),
     the function x ↦ ∫_y ‖f x‖ · ‖f y‖ · √(π/s) · exp(-(x₀+y₀)²/(4s)) · exp(-sω²) is integrable.
@@ -2756,7 +2736,7 @@ lemma F_norm_bound_via_linear_vanishing (m : ℝ) [Fact (0 < m)] (f : TestFuncti
     · -- Integrability: ‖f x‖ * ‖f a‖ * √(π/s) * exp(-...) * exp_factor
       -- Bounded by (‖f x‖ * √(π/s) * exp_factor) * ‖f a‖ since exp(-...) ≤ 1
       refine Integrable.mono (hf_int_norm.const_mul (‖f x‖ * √(π / s) * exp_factor)) ?_ ?_
-      · -- AEStronglyMeasurable: use textbook axiom
+      · -- AEStronglyMeasurable: use the measurability lemma
         exact schwartz_heat_product_aestronglymeasurable f x (√(π / s)) exp_factor s hs
       · -- ‖integrand‖ ≤ ‖bound‖
         apply Filter.Eventually.of_forall
@@ -2781,7 +2761,7 @@ lemma F_norm_bound_via_linear_vanishing (m : ℝ) [Fact (0 < m)] (f : TestFuncti
     refine le_trans step1 ?_
     apply MeasureTheory.integral_mono_of_nonneg
     · exact Filter.Eventually.of_forall (fun _ => norm_nonneg _)
-    · -- Integrability: use textbook axiom
+    · -- Integrability: use the integrability lemma
       exact schwartz_iterated_integral_integrable f hf_int_norm (√(π / s)) exp_factor s hs
     · exact Filter.Eventually.of_forall step2
 
@@ -2804,7 +2784,7 @@ lemma F_norm_bound_via_linear_vanishing (m : ℝ) [Fact (0 < m)] (f : TestFuncti
         apply mul_le_mul_of_nonneg_right h_fubini_bound hexp_nonneg
     _ = K_fubini * s^(3/2 : ℝ) * Real.exp (-s * (‖k_sp‖^2 + m^2)) := by ring
 
-/-- **AXIOM**: Fubini swap for s ↔ p̄ integrals.
+/-- **Theorem:** Fubini swap for s ↔ p̄ integrals.
 
     Swaps integration order:
     ∫₀^∞ ds ∫_{SpatialCoords} F(s, p̄) = ∫_{SpatialCoords} ∫₀^∞ ds F(s, p̄)
@@ -2819,7 +2799,7 @@ lemma F_norm_bound_via_linear_vanishing (m : ℝ) [Fact (0 < m)] (f : TestFuncti
     2. The s-integrand decays as exp(-s·ω²) where ω² = |p̄|² + m² > 0
     3. Combined integrability on `SpatialCoords × (0,∞)` follows from `Integrable.prod_mul`
 
-    **Note:** This is the most delicate axiom. Requires splitting the region into
+    **Note:** This is the most delicate of the Fubini swaps. Requires splitting the region into
     "small s" (UV, controlling 1/r² singularity) and "large s" (IR, using mass m).
 
     **Validation:** Reviewed by Gemini 3 Pro - confirmed mathematically valid,
@@ -3139,7 +3119,7 @@ lemma fubini_s_xy_fixed_integrand_integrable (m : ℝ) [Fact (0 < m)]
     rw [h_zero]
     exact integrable_zero (SpaceTime × SpaceTime) ℂ (volume.prod volume)
 
-/-- **THEOREM** (formerly axiom): Fubini swap for s ↔ (x,y) integrals (for fixed k_sp).
+/-- **Theorem:** Fubini swap for s ↔ (x,y) integrals (for fixed k_sp).
 
     For fixed k_sp, swaps integration order:
     ∫₀^∞ ds ∫_x ∫_y F(s,x,y) = ∫_x ∫_y ∫₀^∞ ds F(s,x,y)
@@ -3308,7 +3288,7 @@ reflection positivity proof. The key observation is that:
 2. Gaussians are L¹: ∫ exp(-s‖k‖²) dk = (π/s)^{n/2}
 3. Products of L¹ functions on independent spaces are L¹ on the product
 
-The common bound for all Fubini axioms is:
+The common bound for all Fubini swap theorems is:
   |integrand| ≤ |f(x)| |f(y)| × C(s) × exp(-s‖k_sp‖²)
 which factors and is therefore integrable on the product space. -/
 
@@ -3472,7 +3452,7 @@ lemma fubini_ksp_xy_full_integrand_integrable (s : ℝ) (hs : 0 < s) (f : TestFu
           gcongr
       _ = Real.sqrt (π / s) * (‖f x‖ * ‖f y‖ * Real.exp (-s * ‖k_sp‖^2)) := by ring
 
-/-- **Theorem** (was axiom): Fubini swap for k_sp ↔ (x,y) integrals.
+/-- **Theorem:** Fubini swap for k_sp ↔ (x,y) integrals.
 
     For fixed s > 0, swaps integration order:
     ∫_x ∫_y (... * ∫_{k_sp} F) = ∫_{k_sp} ∫_x ∫_y (... * F)

@@ -273,9 +273,9 @@ lemma gff_exp_abs_pairing_memLp (f : TestFunction) (p : ENNReal) (hp : p ≠ ⊤
 
   -- Here we use the fact that for any test function, linear functionals on Gaussian
   -- measures have all moments finite, so any polynomial growth times exponential decay
-  -- is integrable. We axiomatize this as part of the Fernique condition.
+  -- is integrable. We prove this below via Young's inequality and Fernique domination.
 
-  -- For now, use the fact that we have L¹ integrability and the function is AE bounded
+  -- Use the fact that we have L¹ integrability and the function is AE bounded
   -- by a multiple of exp(α x²) which is integrable
   have h_aesm : AEStronglyMeasurable (fun ω => Real.exp |ω f|) (μ_GFF m).toMeasure :=
     (Real.continuous_exp.measurable.comp (continuous_abs.measurable.comp (WeakDual.eval_measurable f))).aestronglyMeasurable

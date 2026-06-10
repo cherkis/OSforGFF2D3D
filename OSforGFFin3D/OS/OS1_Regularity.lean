@@ -75,7 +75,7 @@ theorem fourier_plancherel_schwartz (g : TestFunctionℂ) :
 
     See `double_mollifier_convergence` in FunctionalAnalysis.lean for the general result.
 
-    Note: The abstract `SchwingerTwoPointFunction` in OS_Axioms.lean is now defined as
+    Note: The abstract `SchwingerTwoPointFunction` in Axioms.lean is now defined as
     a limit (using `limUnder`), properly avoiding DiracDelta. For the GFF specifically,
     we use this direct definition for computational convenience. -/
 noncomputable def SchwingerTwoPointFunction_GFF (m : ℝ) [Fact (0 < m)] (x : SpaceTime) : ℝ :=
@@ -93,7 +93,7 @@ theorem schwingerTwoPoint_eq_freeCovarianceKernel (m : ℝ) [Fact (0 < m)] (x : 
     1. Continuity of freeCovarianceKernel away from 0
     2. SchwingerFunction₂ for the GFF computes ∫∫ f(u) C(u-v) g(v) du dv
 
-    Both are standard properties of the GFF; the sorries encode these standard facts. -/
+    Both are standard properties of the GFF, established via the lemmas below. -/
 theorem schwingerTwoPointFunction_eq_GFF (m : ℝ) [Fact (0 < m)] (x : SpaceTime) (hx : x ≠ 0) :
   SchwingerTwoPointFunction (gaussianFreeField_free m) x = SchwingerTwoPointFunction_GFF m x := by
   -- Use schwingerTwoPointFunction_eq_kernel
@@ -452,7 +452,7 @@ lemma gff_generating_L2_bound (m : ℝ) [Fact (0 < m)] (f : TestFunctionℂ) :
 
 /-! ## Two-Point Function Local Integrability
 
-Using the axioms above, we establish local integrability of the Schwinger function.
+Using the decay and measurability results above, we establish local integrability of the Schwinger function.
 -/
 
 /-- The two-point Schwinger function is locally integrable.
@@ -466,7 +466,7 @@ lemma gff_two_point_locally_integrable (m : ℝ) [Fact (0 < m)] :
   -- Apply real version of the decay bound
   refine locallyIntegrable_of_rpow_decay_real (d := STDimension) (C := C) (α := 2)
     ?hd ?hC ?hα ?h_decay ?h_meas
-  · -- hd: STDimension = 4 ≥ 3
+  · -- hd: STDimension = 3 ≥ 3
     norm_num [STDimension]
   · -- hC: C > 0
     exact hC_pos
@@ -486,7 +486,7 @@ lemma gff_two_point_locally_integrable (m : ℝ) [Fact (0 < m)] :
 
 Using the exponential L²-bound for the generating functional and local
 integrability of the two-point function, we verify OS1 as stated in
-`OS_Axioms.lean` (with the p-th power appearing inside the exponential).
+`Axioms.lean` (with the p-th power appearing inside the exponential).
 -/
 
 open MeasureTheory

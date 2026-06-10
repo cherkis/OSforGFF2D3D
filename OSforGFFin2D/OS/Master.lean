@@ -15,7 +15,7 @@ import OSforGFFin2D.OS.OS4_Ergodicity
 
 Assembles OS0–OS4 into `gaussianFreeField_satisfies_all_OS_axioms`:
 
-- OS0 (Analyticity): Hartogs + Fernique — `OS.OS0_Analyticity`
+- OS0 (Analyticity): direct covariance quadratic form + holomorphic integral theorem — `OS.OS0_Analyticity`
 - OS1 (Regularity): Plancherel + momentum bound — `OS.OS1_Regularity`
 - OS2 (Euclidean Invariance): C depends on |x−y| — `OS.OS2_Invariance`
 - OS3 (Reflection Positivity): Schwinger parametrization + Schur–Hadamard — `OS.OS3_ReflectionPositivity`

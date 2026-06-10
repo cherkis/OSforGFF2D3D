@@ -23,12 +23,12 @@ import Mathlib.MeasureTheory.Function.LpSpace.ContinuousCompMeasurePreserving
 
 import OSforGFFin2D.Spacetime.Basic
 /-!
-# Euclidean Group E(4) and Its Actions
+# Euclidean Group E(2) and Its Actions
 
 Defines the Euclidean group E(2) = ℝ² ⋊ O(2) with action g • x = R(x) + t
 on spacetime, and its induced actions on test functions (g • f)(x) = f(g⁻¹ • x).
 
-Key properties: measure preservation (d⁴(E⁻¹x) = d⁴x), temperate growth of
+Key properties: measure preservation (d²(E⁻¹x) = d²x), temperate growth of
 pullbacks (needed for Schwartz space), and continuity of all actions.
 Foundation for the OS2 axiom.
 -/

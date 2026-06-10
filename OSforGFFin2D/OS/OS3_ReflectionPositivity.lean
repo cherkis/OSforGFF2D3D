@@ -124,7 +124,7 @@ lemma freeCovarianceFormR_reflection_matrix_posSemidef
   -- Step 1: Use bilinearity to collect the sums
   have h_step1 : ∑ i, ∑ j, c i * freeCovarianceFormR m (QFT.compTimeReflectionReal (f i).val) (f j).val * c j =
       freeCovarianceFormR m (∑ i, c i • QFT.compTimeReflectionReal (f i).val) (∑ j, c j • (f j).val) := by
-      -- Use induction on finite sums combined with the bilinearity axioms
+      -- Use induction on finite sums combined with the bilinearity lemmas
       -- We'll work with the multiplication form and convert to smul at the end
 
       -- Apply linearity in first argument: ∑ᵢ cᵢ • θfᵢ

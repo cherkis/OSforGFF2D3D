@@ -54,11 +54,9 @@ open MeasureTheory Complex Real Filter
 open TopologicalSpace
 open scoped Real InnerProductSpace BigOperators
 
-/-! ## Axioms in this file
+/-! ## Note
 
-This file contains no axioms (all previously unused axioms have been removed).
-
-Note: This file is NOT in the import chain for the master theorem.
+This file is NOT in the import chain for the master theorem.
 -/
 
 noncomputable section
@@ -627,9 +625,9 @@ theorem integrable_schwinger_fourier_integrand (α : ℝ) (hα : 0 < α) (m : �
   -- Step 6: Apply Integrable.mono'
   exact Integrable.mono' hgh_int hf_meas (Filter.Eventually.of_forall hf_le)
 
-/-- **Fubini swap axiom for Schwinger integrand with phase.**
+/-- **Fubini swap lemma for Schwinger integrand with phase.**
 
-    This axiom asserts that the integration order can be swapped for the
+    This lemma asserts that the integration order can be swapped for the
     Gaussian × phase integrand appearing in the Schwinger representation:
 
     Re[∫_k (∫_t exp(-(α+t)‖k‖²) * exp(-tm²) dt) * phase(k) dk]
@@ -1014,7 +1012,7 @@ theorem fubini_schwinger_fourier (α : ℝ) (hα : 0 < α) (m : ℝ) (hm : 0 < m
   -- Fubini's theorem applies because h_int provides integrability of the absolute value.
   -- The phase factor exp(-i⟨k, x-y⟩) has norm 1, so it doesn't affect integrability.
   --
-  -- AXIOM: Fubini integration order swap for Gaussian × phase integrand
+  -- Fubini integration order swap for Gaussian × phase integrand
   exact fubini_schwinger_integrand α hα m hm x y hxy
 
 /-- As α → 0⁺, the Schwinger-regulated covariance converges to the unregulated form. -/
@@ -1103,7 +1101,7 @@ theorem freeCovariance_regulated_tendsto_bessel (m : ℝ) (hm : 0 < m) (x y : Sp
   -- Step 3: The limit equals the Bessel form
   have h_limit_eq := covarianceSchwingerRep_eq_freeCovarianceBessel m hm x y hxy
   rw [← h_limit_eq]
-  -- Step 4: Use Fubini axiom to equate the Fourier and Schwinger forms
+  -- Step 4: Use the Fubini swap lemma to equate the Fourier and Schwinger forms
   have h_eq : ∀ α ∈ Set.Ioi (0 : ℝ), covarianceSchwingerRegulated α m ‖x - y‖ = freeCovariance_regulated α m x y :=
     fun α hα => (fubini_schwinger_fourier α hα m hm x y hxy).symm
   exact h_schwinger_conv.congr' (eventually_nhdsWithin_of_forall h_eq)
@@ -2066,10 +2064,6 @@ lemma freePropagator_complex_smooth (m : ℝ) [Fact (0 < m)] :
   apply ContDiff.comp
   · exact ofRealCLM.contDiff
   · exact freePropagator_smooth m
-
---   - axiom iteratedFDeriv_freePropagator_polynomial_bound
---   - theorem freePropagator_temperate_growth
---   - theorem schwartz_mul_by_temperate
 
 /-- The free propagator is positive -/
 lemma freePropagator_pos {m : ℝ} [Fact (0 < m)] (k : SpaceTime) : 0 < freePropagatorMomentum m k := by

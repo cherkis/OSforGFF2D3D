@@ -60,7 +60,7 @@ lemma gaussian_complex_pairing_abs_sq_integrable
   set φRe : TestFunction := (complex_testfunction_decompose φ).1
   set φIm : TestFunction := (complex_testfunction_decompose φ).2
 
-  -- Use the proven theorem from GFFbridge (derives from gff_pairing_is_gaussian)
+  -- Use the proven theorem (derives from gff_pairing_is_gaussian)
   have hRe_mem :
       MemLp (distributionPairingCLM φRe) (2 : ENNReal)
         (gaussianFreeField_free m).toMeasure :=

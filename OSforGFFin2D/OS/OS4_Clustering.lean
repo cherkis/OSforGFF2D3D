@@ -48,9 +48,9 @@ Thus exp(-⟨f, C(T_a g)⟩) → exp(0) = 1 as |a| → ∞, and
 
 ## Main Results
 
-- `translate_test_function_complex`: Spatial translation for complex test functions
-- `cross_term_decay`: The cross covariance term decays at large separations
-- `gaussian_satisfies_OS4`: The GFF satisfies OS4 clustering
+- `schwartz_cross_covariance_decay_real`: The cross covariance term decays at large separations
+- `gaussianFreeField_satisfies_OS4`: The GFF satisfies OS4 clustering
+- `gaussianFreeField_satisfies_OS4_PolynomialClustering`: Polynomial-rate clustering
 -/
 
 open MeasureTheory Complex
@@ -121,7 +121,7 @@ lemma gff_generating_sum_factorization (m : ℝ) [Fact (0 < m)] (f g : TestFunct
     ring
   exact h_exp
 
-/-! ## Cross Covariance Decay Axiom -/
+/-! ## Cross Covariance Decay -/
 
 /-! ## Translation as Euclidean Action -/
 
@@ -329,7 +329,7 @@ lemma GFF_OS4_from_small_decay_real (m : ℝ) [Fact (0 < m)]
     This follows from:
     - The kernel C(z) decays like 1/|z|² at large distances (freeCovarianceKernel_decay_bound)
     - Schwartz functions are L¹ integrable
-    - The textbook axiom schwartz_bilinear_translation_decay
+    - The proven theorem schwartz_bilinear_translation_decay_proof
 
     Uses the covariance representation:
     S₂(f, T_a g) = ∫∫ f(x) · C(x-y) · g(y-a) dx dy -/
@@ -625,7 +625,7 @@ theorem gaussianFreeField_satisfies_OS4_PolynomialClustering (m : ℝ) [Fact (0 
     (α : ℝ) (hα : α > 0) :
     OS4_PolynomialClustering (gaussianFreeField_free m) α hα := by
   intro f g
-  -- Step 1: Get kernel properties for applying the decay axiom
+  -- Step 1: Get kernel properties for applying the decay theorem
   have hm : 0 < m := Fact.out
   have hK_meas : Measurable (freeCovarianceKernel m) :=
     measurable_of_continuousOn_compl_singleton 0 (freeCovarianceKernel_continuousOn m hm)
@@ -649,7 +649,7 @@ theorem gaussianFreeField_satisfies_OS4_PolynomialClustering (m : ℝ) [Fact (0 
   have hK_decay : ∀ z : SpaceTime, ‖z‖ ≥ 1/m → |freeCovarianceKernel m z| ≤ C_exp * Real.exp (-m * ‖z‖) :=
     freeCovarianceKernel_exponential_decay m hm
 
-  -- Step 3: Apply the quantitative decay axiom
+  -- Step 3: Apply the quantitative decay theorem
   have ⟨c_decay, hc_nonneg, hBound⟩ := schwartz_bilinear_translation_decay_polynomial_proof
     f g (freeCovarianceKernel m)
     hK_meas hK_loc
@@ -663,7 +663,7 @@ theorem gaussianFreeField_satisfies_OS4_PolynomialClustering (m : ℝ) [Fact (0 
   -- The key steps:
   -- a) E[e^{⟨ω,f⟩ + ⟨T_s ω, g⟩}] = E[e^{⟨ω, f + T_{-s} g⟩}] by duality
   -- b) For Gaussian: = Z[f]·Z[g]·exp(-S₂(f, T_{-s} g))
-  -- c) The cross term S₂(f, T_{-s} g) is bounded by the decay axiom
+  -- c) The cross term S₂(f, T_{-s} g) is bounded by the decay theorem
 
   -- Step 4: Define key quantities
   let Ef := ∫ ω, Complex.exp (distributionPairingℂ_real ω f) ∂(gaussianFreeField_free m).toMeasure
@@ -677,7 +677,7 @@ theorem gaussianFreeField_satisfies_OS4_PolynomialClustering (m : ℝ) [Fact (0 
     intro t ht
     -- Use schwinger2_time_translated_eq_bilinear to rewrite S₂
     rw [schwinger2_time_translated_eq_bilinear]
-    -- The RHS is exactly the form of the decay axiom with a = timeShiftConst(t)
+    -- The RHS is exactly the form of the decay theorem with a = timeShiftConst(t)
     have h_norm_bound := hBound (TimeTranslation.timeShiftConst t)
     -- ‖timeShiftConst(t)‖ = |t| = t for t ≥ 0
     rw [timeShiftConst_norm, abs_of_nonneg ht] at h_norm_bound

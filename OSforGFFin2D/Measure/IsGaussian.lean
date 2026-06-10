@@ -9,15 +9,14 @@ import OSforGFFin2D.Schwinger.GaussianMoments
 /-!
 # Gaussianity Verification
 
-Identifies S₂(f,g) = C(f,g) via the identity theorem, using OS0's derivative
-interchange. From Z[tf+sg] = exp(−½ Q(tf+sg, tf+sg)):
+Identifies S₂(f,g) = C(f,g) via the identity theorem. The real two-point function
+is computed by the polarization identity (`schwinger_eq_covariance_real`), giving
+S₂(f,g) = Q(f,g) for real test functions. This is extended to complex test functions
+using OS0 analyticity together with the 1D identity theorem
+(`gff_complex_characteristic_OS0`), yielding S₂(f,g) = freeCovarianceℂ(f,g).
 
-- ∂²/∂t∂s|₀ via Gaussian formula gives −Q(f,g)
-- ∂²/∂t∂s|₀ via integral interchange (OS0) gives −S₂(f,g)
-- Hence S₂(f,g) = Q(f,g) = freeCovarianceℂ(f,g)
-
-This imports OS0 because it uses the proved analyticity to justify the derivative
-interchange, not because of OS0-specific infrastructure.
+This imports OS0 because the complex extension uses the proved analyticity together
+with the identity theorem, not because of OS0-specific infrastructure.
 
 ## Main results
 
@@ -45,11 +44,12 @@ lemma gaussian_pairing_product_integrable_free_core
 
 /-! ## Core Theorems
 
-The proofs use OS0's derivative interchange machinery:
+The proofs use the polarization identity and OS0 analyticity + the 1D identity theorem:
 1. `gff_real_characteristic` gives Z[f] = exp(-½ Q(f,f)) for real f
 2. `gaussianFreeField_satisfies_OS0` gives analyticity of Z
-3. `hasFDerivAt_integral_of_dominated_of_fderiv_le` (used in OS0) gives derivative interchange
-4. Computing ∂²Z/∂t∂s|₀ two ways (Gaussian formula vs integral) gives S₂ = Q
+3. `schwinger_eq_covariance_real` computes the real two-point function via polarization
+4. `gff_complex_characteristic_OS0` extends to complex f via analyticity and the 1D
+   identity theorem, giving S₂ = Q
 -/
 
 /-- Bilinearity expansion of Q(tf+sg, tf+sg).
@@ -91,7 +91,7 @@ lemma gff_cf_two_testfunctions (f g : TestFunction) (t s : ℝ) :
 
 /-! ## OS0-Based Derivative Machinery
 
-The following lemmas use OS0's analyticity to compute mixed derivatives. -/
+These lemmas establish analyticity of two-parameter slices for the identity-theorem argument. -/
 
 /-- OS0 specialized to two test functions gives analyticity of Z[tf + sg] in (t,s) ∈ ℂ² -/
 lemma gff_two_param_analytic (f g : TestFunction) :
@@ -116,7 +116,7 @@ The key insight is that we can extend from real to complex test functions using:
 3. The Gaussian formula defines an entire function of (z₀, z₁)
 4. By the identity theorem (applied twice in 1D), the two analytic functions agree everywhere
 
-This eliminates the need for `twoD_line_from_realCF` from MinlosAnalytic. -/
+This avoids any dependence on MinlosAnalytic. -/
 
 /-- Key technical lemma: fixing one coordinate, the slice is analytic in the other.
     For z₀ ↦ Z[z₀•f + t•g] where t is a fixed complex number.
@@ -216,7 +216,7 @@ lemma gff_cf_agrees_on_reals_OS0 (f g : TestFunction) (t s : ℝ) :
   rw [GJGeneratingFunctionalℂ_toComplex, h]
 
 /-- Complex generating functional for the free GFF via OS0 + identity theorem.
-    This proves the result WITHOUT using twoD_line_from_realCF. -/
+    This proves the result without the MinlosAnalytic 2D-slice lemma. -/
 theorem gff_complex_characteristic_OS0 :
     ∀ J : TestFunctionℂ,
       GJGeneratingFunctionalℂ (gaussianFreeField_free m) J =
@@ -352,7 +352,7 @@ theorem gff_complex_characteristic_OS0 :
 The key insight is to use the **polarization identity** instead of derivative calculus.
 
 For a centered Gaussian:
-- E[⟨ω,f⟩²] = Q(f,f) (this is `gff_second_moment_eq_covariance` from GFFbridge)
+- E[⟨ω,f⟩²] = Q(f,f) (this is `gff_second_moment_eq_covariance` from Measure/Construct.lean)
 
 By polarization:
 - E[XY] = ¼(E[(X+Y)²] - E[(X-Y)²])

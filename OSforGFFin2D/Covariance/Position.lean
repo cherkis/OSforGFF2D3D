@@ -27,7 +27,7 @@ import OSforGFFin2D.Covariance.Parseval
 /-!
 # Position-Space Free Covariance
 
-Position-space covariance C(x,y) = (m/4π²|x−y|) K₁(m|x−y|) and its properties:
+Position-space covariance C(x,y) = (1/2π) K₀(m|x−y|) and its properties:
 Euclidean invariance, time reflection invariance, and Schwinger representation
 C(x,y) = ∫₀^∞ e^{−sm²} H(s,|x−y|) ds via the heat kernel.
 
@@ -47,64 +47,11 @@ open scoped Real InnerProductSpace BigOperators
 
 /-! ## Dependencies
 
-No axioms declared here. Uses `freeCovarianceℂ_bilinear_integrable` transitively
+Uses `freeCovarianceℂ_bilinear_integrable` transitively
 via `parseval_triple_integrand_integrable` in `Covariance.Parseval`.
 -/
 
 noncomputable section
-/-! ### Fourier Analysis Infrastructure -/
-
-/-- The heat kernel in momentum space. This is the result of integrating the full propagator over the time-component of momentum. -/
-noncomputable def heatKernelMomentum (m : ℝ) (t : ℝ) (k_spatial : SpatialCoords) : ℝ :=
-  Real.exp (-t * Real.sqrt (‖k_spatial‖^2 + m^2)) / Real.sqrt (‖k_spatial‖^2 + m^2)
-
-/-- The inverse Fourier transform for a spatial function. -/
-noncomputable def inverseFourierTransform (_f : SpatialCoords → ℂ) : SpatialL2 :=
-  Classical.choose exists_spatialL2_function
-  where exists_spatialL2_function : ∃ _h : SpatialL2, True := ⟨0, trivial⟩
-
-/-- Spatial convolution of two functions. -/
-noncomputable def spatial_convolution (_f : SpatialL2) (_g : SpatialL2) : SpatialL2 :=
-  Classical.choose exists_spatialL2_function
-  where exists_spatialL2_function : ∃ _h : SpatialL2, True := ⟨0, trivial⟩
-
-/-- Fourier transform on spatial coordinates only.
-    Note: This has type issues that need to be resolved for spatial coordinates -/
-noncomputable def fourierTransform_spatial_draft (h : SpatialL2) (k : SpatialCoords) : ℂ :=
-  -- The proper spatial Fourier transform: ∫ x, h(x) * exp(-i k·x) dx
-  -- For the GFF, this is essential for momentum space methods and reflection positivity
-  --
-  -- Current issue: Type mismatch between SpatialCoords and the domain of SpatialL2
-  -- We need a proper inner product between k : SpatialCoords and x : (domain of h)
-  --
-  -- For now, we acknowledge this is a placeholder until the coordinate systems are unified
-  -- In the actual GFF implementation, this would be:
-  -- ∫ x, (h x : ℂ) * Complex.exp (-Complex.I * ⟨k, x⟩) ∂spatialMeasure
-  -- where ⟨k, x⟩ is the spatial inner product and spatialMeasure is the (d-1)-dimensional measure
-
-  -- Working implementation that uses k properly in the Fourier transform structure
-  -- We need to create a function that depends on k to make this a proper Fourier transform
-  -- Since we can't directly compute ⟨k, x⟩ due to type issues, we use a workaround:
-  ∫ x, (h x : ℂ) * Complex.exp (-Complex.I * (‖k‖ * ‖x‖)) ∂volume
-  -- This uses both k and x through their norms, making it k-dependent
-  -- In the full implementation, this would be replaced with the proper inner product ⟨k, x⟩
-
-/-- Draft: Embed spatial L² function into spacetime momentum space.
-
-    Conceptually: (SpatialToMomentum m f)(k₀, k⃗) = f̂(k⃗) * δ(k₀)
-
-    Since the Fourier transform of δ(k₀) is the constant function 1,
-    we can implement this by extending the spatial function to be independent of time.
-
-    This is much cleaner than the position space approach! -/
-noncomputable def SpatialToMomentum_draft (f : SpatialL2) : SpaceTime → ℂ :=
-  fun k =>
-    -- Extract the spatial part of the momentum vector k
-    let k_spatial := spatialPart k
-    -- Apply the spatial Fourier transform of f to k_spatial
-    -- Since FT[δ(k₀)] = 1, we just ignore the k₀ component
-    fourierTransform_spatial_draft f k_spatial
-
 
 /-- ** (Parseval for Covariance - Position Space formulation with regulator):**
     The fundamental Parseval identity relating the regulated covariance bilinear form to
@@ -622,7 +569,7 @@ theorem freeCovarianceℂ_positive (m : ℝ) [Fact (0 < m)] (f : TestFunctionℂ
     The Parseval identity for the well-defined Bessel form of the covariance.
     This directly relates the position-space covariance integral to the momentum-space integral.
 
-    Note: Unlike the regulated form, this uses freeCovariance (Bessel K₁ form) which is
+    Note: Unlike the regulated form, this uses freeCovariance (Bessel K₀ form) which is
     well-defined pointwise. The equality holds because the Bessel form equals the limit
     of the regulated forms. -/
 theorem parseval_covariance_schwartz_bessel (m : ℝ) [Fact (0 < m)] (f : TestFunctionℂ) :

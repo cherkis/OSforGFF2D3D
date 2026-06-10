@@ -11,7 +11,7 @@ import OSforGFFin3D.Measure.GaussianFreeField
 /-!
 # OS2 — Euclidean Invariance
 
-Proves Z[Ef] = Z[f] for any Euclidean transformation E ∈ E(4). The argument:
+Proves Z[Ef] = Z[f] for any Euclidean transformation E ∈ E(3). The argument:
 
 1. Change variables x → E⁻¹x, y → E⁻¹y in the covariance integral
 2. C(x,y) depends only on |x−y|, so C(E⁻¹x, E⁻¹y) = C(x,y)

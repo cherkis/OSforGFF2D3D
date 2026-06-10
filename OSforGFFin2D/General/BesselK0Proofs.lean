@@ -4,7 +4,7 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Michael R. Douglas
 
 Proofs of K₀ properties adapted from auto1/lean/SpecialFunctions/Bessel.
-These replace the 5 Bessel axioms formerly in BesselFunction.lean.
+They provide the K₀ properties (decay, integrability, asymptotics) used by the d=2 free covariance.
 -/
 import OSforGFFin2D.General.BesselFunction
 import Mathlib.Analysis.Calculus.ParametricIntegral

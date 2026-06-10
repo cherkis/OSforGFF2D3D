@@ -35,7 +35,6 @@ open TopologicalSpace MeasureTheory Complex Filter
 /-! ## Contents
 
 This file provides infrastructure for Gaussian measures via Minlos.
-No axioms declared here.
 -/
 
 noncomputable section

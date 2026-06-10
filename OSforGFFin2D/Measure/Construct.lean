@@ -47,7 +47,7 @@ The covariance C(f,g) = ∫∫ f(x) K(x−y) g(y) dx dy with K = free propagator
 shown to be symmetric, bilinear, positive semidefinite, and nuclear (via the
 Hilbert-Schmidt embedding from `Covariance.RealForm`).
 
-Lᵖ integrability of pairings ⟨ω,f⟩ under μ is proved (not axiomatized) by showing
+Lᵖ integrability of pairings ⟨ω,f⟩ under μ is proved by showing
 the pushforward of μ by any pairing is a 1D Gaussian (`gff_pairing_is_gaussian`),
 then using Mathlib's `memLp_id_gaussianReal`.
 
@@ -63,7 +63,7 @@ open TopologicalSpace SchwartzMap
 
 /-! ## Dependencies
 
-No axioms declared here. Transitively uses `schwartz_isHilbertNuclear, schwartz_separableSpace` and `minlos_theorem (proven)`.
+Transitively uses `schwartz_isHilbertNuclear`, `schwartz_separableSpace`, and `minlos_theorem`.
 -/
 
 noncomputable section

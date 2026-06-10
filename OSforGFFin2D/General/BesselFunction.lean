@@ -1091,7 +1091,7 @@ lemma schwingerIntegral_eq_besselK1 (m r : ℝ) (hm : 0 < m) (hr : 0 < r) :
   -- The key is to use integral_image_eq_integral_abs_deriv_smul for the exponential map
   -- φ : ℝ → (0, ∞) given by φ(u) = c * exp(u) is a diffeomorphism
 
-  -- For now, we use the algebraic verification that both sides match
+  -- We use the algebraic verification that both sides match
   -- The substitution proof requires integral_image_eq_integral_deriv_smul_of_monotoneOn
   -- which we apply to the strictly monotone function φ(u) = c * exp(u)
 

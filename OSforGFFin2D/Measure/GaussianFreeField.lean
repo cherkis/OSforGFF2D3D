@@ -31,8 +31,8 @@ import OSforGFFin2D.Schwinger.Defs
 Defines μ_GFF m as a ProbabilityMeasure and proves two OS axioms for general Gaussian measures:
 
 - OS0 (alternative via quadratic form): Z[∑ᵢ zᵢJᵢ] = exp(−½ ∑ᵢⱼ zᵢzⱼ⟨Jᵢ,CJⱼ⟩) is entire
-  (the primary OS0 proof via Hartogs is in `OS.OS0_Analyticity`)
-- OS2 (Euclidean invariance): Z[gf] = Z[f] when covariance is E(4)-invariant
+  (the primary OS0 proof via the holomorphic integral theorem is in `OS.OS0_Analyticity`)
+- OS2 (Euclidean invariance): Z[gf] = Z[f] when covariance is E(2)-invariant
 -/
 
 open MeasureTheory Complex
@@ -229,44 +229,5 @@ theorem gaussian_satisfies_OS2
   congr 2
   -- Use Euclidean invariance directly (symmetric form)
   exact (h_euclidean_invariant g f f).symm
-
-/-! ## Implementation Strategy
-
-To complete these proofs, we need to:
-
-1. **Complete the Glimm-Jaffe reflection positivity argument:**
-   - Time reflection properly implemented using `QFT.compTimeReflection` from DiscreteSymmetry ✓
-   - Implement `covarianceOperator` as the Riesz representation of the 2-point function
-   - Complete the proof of `glimm_jaffe_exponent_reflection_positive`
-   - Show that the 4-term expansion in the exponent has non-negative real part
-
-3. **Prove key lemmas:**
-   - Schwartz map composition with smooth transformations
-   - Properties of the bilinear form `distributionPairingℂ_real`
-   - Continuity and analyticity of exponential functionals
-
-4. **Mathematical insights implemented:**
-   - **OS0**: Polynomial → exponential → entire function ✓
-   - **OS1**: Positive semidefinite covariance → bounded generating functional ✓
-   - **OS2**: Covariance commutes with transformations → generating functional invariant ✓
-   - **OS3**: Reflection positivity framework following Glimm-Jaffe Theorem 6.2.2 ✓ (structure)
-   - **OS4**: Covariance decay → correlation decay ✓
-
-5. **Glimm-Jaffe Theorem 6.2.2 Implementation:**
-   - Defined the key expansion: `glimm_jaffe_exponent` captures ⟨F̄ - CF', C(F̄ - CF')⟩
-   - Structured the proof around the exponential form Z[F̄ - CF'] = exp(-½⟨F̄ - CF', C(F̄ - CF')⟩)
-   - The reflection positivity condition ensures Re⟨F̄ - CF', C(F̄ - CF')⟩ ≥ 0
-   - This gives |Z[F̄ - CF']| ≤ 1, which is the heart of reflection positivity
-
-6. **Connection to existing GFF work:**
-   - Use results from `GFF.lean` and `GFF2.lean` where applicable
-   - Translate L2-based proofs to distribution framework
-   - Leverage the explicit Gaussian form of the generating functional
-
-Note: The main theorem `gaussian_satisfies_all_GJ_OS_axioms` shows that Gaussian measures
-satisfy all the OS axioms under appropriate assumptions on the covariance. The Glimm-Jaffe
-approach for OS3 provides the mathematical foundation for reflection positivity in the
-Gaussian Free Field context.
--/
 
 

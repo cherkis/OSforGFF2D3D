@@ -23,12 +23,12 @@ import Mathlib.MeasureTheory.Function.LpSpace.ContinuousCompMeasurePreserving
 
 import OSforGFFin3D.Spacetime.Basic
 /-!
-# Euclidean Group E(4) and Its Actions
+# Euclidean Group E(3) and Its Actions
 
 Defines the Euclidean group E(3) = ℝ³ ⋊ O(3) with action g • x = R(x) + t
 on spacetime, and its induced actions on test functions (g • f)(x) = f(g⁻¹ • x).
 
-Key properties: measure preservation (d⁴(E⁻¹x) = d⁴x), temperate growth of
+Key properties: measure preservation (d³(E⁻¹x) = d³x), temperate growth of
 pullbacks (needed for Schwartz space), and continuity of all actions.
 Foundation for the OS2 axiom.
 -/
