@@ -3,3 +3,9 @@
 *.olean
 *.ilean
 *.hash
+
+# Local scratch notes — not part of the library
+OS0Comment*
+OS1OS2Comment*
+OS3Comment*
+OS4Comment*

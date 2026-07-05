@@ -17,7 +17,7 @@ Do not modify any code until that plan exists and has been approved. At the end 
 
 ## References (read-only)
 
-- `@../OSforGFFin3D/` — a local, *exact* copy of the current 4D library. Use it to read source, run `grep`, and consult `docs/dimension_dependence.md`. **Do not import from this path** — use the git dependency instead.
+- `@../OSforGFF4D/` — a local, *exact* copy of the current 4D library. Use it to read source, run `grep`, and consult `docs/dimension_dependence.md`. **Do not import from this path** — use the git dependency instead.
 - `@../OSforGFFin3Dand2D/` — a prior, completed 3D+2D project against an *older* version of the 4D library. Useful as a worked example, but file structure and dependencies are out of date.
 
 ## Project layout
